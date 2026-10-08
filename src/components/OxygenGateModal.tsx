@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import {
   ShieldAlert,
-  AlertTriangle,
   CheckCircle2,
   X,
   RotateCcw,
@@ -36,8 +35,6 @@ export const OxygenGateModal: React.FC<OxygenGateModalProps> = ({
       setDoInput(val);
     }
   };
-
-  const scaledRationKg = Math.round(meal.plannedKg * evaluation.scaleFactor * 10) / 10;
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
@@ -102,8 +99,8 @@ export const OxygenGateModal: React.FC<OxygenGateModalProps> = ({
 
           {/* OXYGEN EVALUATION RESULTS */}
 
-          {/* CASE 1: RED SKIP MEAL SCREEN (DO < 3.0 mg/L) */}
-          {evaluation.status === 'Stop' && (
+          {/* Low or moderate oxygen blocks feeding until DO returns to the safe range. */}
+          {evaluation.status !== 'Safe' && (
             <div className="bg-rose-50 border-2 border-rose-500 rounded-3xl p-5 text-rose-950 space-y-4 shadow-md animate-in zoom-in-95">
               <div className="flex items-start gap-3">
                 <div className="w-12 h-12 rounded-2xl bg-rose-600 text-white flex items-center justify-center shrink-0 shadow-md">
@@ -111,70 +108,36 @@ export const OxygenGateModal: React.FC<OxygenGateModalProps> = ({
                 </div>
                 <div>
                   <span className="px-2.5 py-0.5 rounded-md bg-rose-600 text-white font-black text-xs uppercase tracking-wider">
-                    SAFETY STOP
+                    LOW OXYGEN
                   </span>
                   <h4 className="font-black text-xl text-rose-950 mt-1">
-                    SKIP MEAL REQUIRED
+                    FEEDING BLOCKED
                   </h4>
                 </div>
               </div>
 
               <p className="text-xs font-bold text-rose-900 leading-relaxed bg-white p-3 rounded-2xl border border-rose-200">
-                {evaluation.description}
+                {evaluation.description} Feeding is blocked until oxygen reaches the safe target.
               </p>
 
               <div className="bg-rose-100 p-3 rounded-2xl border border-rose-300 text-xs font-bold text-rose-950">
                 <span>Alert sent to farm manager. Feed checkbox remains locked.</span>
               </div>
 
-              {/* SINGLE BUTTON: RETRY LATER */}
-              <button
-                onClick={() => {
-                  onSkipMeal('Blocked: Oxygen below 3.0 mg/L safety stop threshold');
-                }}
-                className="w-full bg-rose-600 hover:bg-rose-500 text-white font-black text-lg rounded-2xl py-4 px-4 flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-all"
-              >
-                <RotateCcw className="w-5 h-5 stroke-[2.5]" />
-                <span>Retry Later</span>
-              </button>
-            </div>
-          )}
-
-          {/* CASE 2: AMBER REDUCED MEAL (3.0 - 5.0 mg/L) */}
-          {evaluation.status === 'Reduced' && (
-            <div className="bg-amber-50 border-2 border-amber-400 rounded-3xl p-5 text-amber-950 space-y-4 shadow-md animate-in zoom-in-95">
-              <div className="flex items-start gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-amber-500 text-amber-950 flex items-center justify-center shrink-0 shadow-md">
-                  <AlertTriangle className="w-7 h-7 stroke-[2.5]" />
-                </div>
-                <div>
-                  <span className="px-2.5 py-0.5 rounded-md bg-amber-500 text-amber-950 font-black text-xs uppercase tracking-wider">
-                    REDUCED MEAL
-                  </span>
-                  <h4 className="font-black text-xl text-amber-950 mt-1">
-                    Caution: Moderate Oxygen
-                  </h4>
-                </div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => onSkipMeal(`Meal skipped: oxygen was ${doInput.toFixed(1)} mg/L, below the safe feeding target`)}
+                  className="min-h-12 rounded-xl bg-rose-600 px-3 text-sm font-black text-white shadow active:scale-95"
+                >
+                  Skip Meal
+                </button>
+                <button
+                  onClick={onClose}
+                  className="min-h-12 rounded-xl border border-rose-300 bg-white px-3 text-sm font-black text-rose-800 active:scale-95"
+                >
+                  <RotateCcw className="mr-1 inline h-4 w-4" /> Retry Later
+                </button>
               </div>
-
-              <p className="text-xs font-bold text-amber-900 leading-relaxed bg-white p-3 rounded-2xl border border-amber-200">
-                {evaluation.description}
-              </p>
-
-              <div className="bg-amber-100 p-3 rounded-2xl border border-amber-300 flex items-center justify-between text-xs font-bold text-amber-950">
-                <span>Reduced Portion:</span>
-                <span className="text-lg font-black text-amber-950 font-mono">
-                  {scaledRationKg} kg (was {meal.plannedKg} kg)
-                </span>
-              </div>
-
-              <button
-                onClick={() => onUnlockMeal(scaledRationKg)}
-                className="w-full bg-amber-600 hover:bg-amber-500 text-white font-black text-lg rounded-2xl py-4 px-4 flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-all"
-              >
-                <CheckCircle2 className="w-5 h-5" />
-                <span>Unlock Reduced Meal</span>
-              </button>
             </div>
           )}
 

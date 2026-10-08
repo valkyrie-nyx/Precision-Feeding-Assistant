@@ -190,7 +190,12 @@ class AquacultureService {
     this.notify();
   }
 
-  public recordMealFed(mealId: string, actualKg: number, leftover: 'none' | 'a little' | 'a lot') {
+  public recordMealFed(
+    mealId: string,
+    actualKg: number,
+    leftover: 'none' | 'a little' | 'a lot',
+    options: { doAtMeal?: number; leftoverKg?: number; reason?: string; feedBatchId?: string; status?: 'Given' | 'Reduced' } = {},
+  ) {
     this.meals = this.meals.map((m) => {
       if (m.id === mealId) {
         return {
@@ -198,6 +203,11 @@ class AquacultureService {
           status: 'Given',
           actualKg,
           leftover,
+          leftoverKg: options.leftoverKg ?? (leftover === 'none' ? 0 : m.leftoverKg),
+          doAtMeal: options.doAtMeal ?? m.doAtMeal,
+          reason: options.reason,
+          feedBatchId: options.feedBatchId,
+          ...(options.status ? { status: options.status } : {}),
         };
       }
       return m;

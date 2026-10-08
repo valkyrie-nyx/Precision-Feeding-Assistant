@@ -72,6 +72,7 @@ export interface Meal {
   leftoverKg?: number;
   leftover?: 'none' | 'a little' | 'a lot';
   reason?: string;
+  feedBatchId?: string;
 }
 
 export interface FeedBatch {
