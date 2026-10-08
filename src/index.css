@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --brand-teal-dark: #0f3942;
+    --brand-teal: #0f4c5c;
+    --brand-blue: #0284c7;
+    --brand-blue-light: #e0f2fe;
+    --bg-page: #f1f5f9;
+  }
+
+  body {
+    background-color: #0f172a; /* Slate 900 dark background around phone frame on desktop */
+    color: #0f172a;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Custom utility for touch targets */
+.touch-target {
+  min-height: 48px;
+  min-width: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Glassmorphism panel effects */
+.glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
