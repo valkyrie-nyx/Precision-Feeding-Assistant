@@ -81,15 +81,47 @@ class AquacultureService {
     speciesId: 'nile_tilapia',
     stockingDate: '2026-09-01',
     stockCount: 15000,
-    startingWeightG: 40.0,
-    currentWeightG: 40.0,
-    currentEstimatedWeightG: 40.0,
+    startingWeightG: 12.0,
+    currentWeightG: 12.0,
+    currentEstimatedWeightG: 12.0,
     currentStageName: 'Fingerling',
   };
 
   // Check-in & telemetry state
   private deadFishToday: number = 0;
+  private deadFishCountToday: number = 0;
+  private deadFishKgToday: number = 0;
+  private mortalityInputUnit: 'count' | 'kg' = 'count';
+  private lastMortalityConfirmation: string | null = null;
   private isCheckedInToday: boolean = false;
+  private mortalityHistory: Array<{
+    date: string;
+    count: number;
+    kg: number;
+    unit: 'count' | 'kg';
+    approxOtherText: string;
+    remainingCount: number;
+    remainingBiomassKg: number;
+  }> = [
+    {
+      date: 'Yesterday',
+      count: 22,
+      kg: 0.26,
+      unit: 'count',
+      approxOtherText: 'approx. 0.26 kg at 12 g average',
+      remainingCount: 15000,
+      remainingBiomassKg: 180.0,
+    },
+    {
+      date: '2 days ago',
+      count: 18,
+      kg: 0.22,
+      unit: 'count',
+      approxOtherText: 'approx. 0.22 kg at 12 g average',
+      remainingCount: 15022,
+      remainingBiomassKg: 180.3,
+    },
+  ];
 
   private telemetry = {
     liveDO: 5.4, // mg/L
@@ -293,6 +325,20 @@ class AquacultureService {
       });
     }
 
+    // 4. High Mortality alert (> 0.5% of population threshold)
+    const thresholdCount = this.farmSetup.stockCount * (PLACEHOLDER_LIMITS.mortality.dailyHighLossThresholdPct / 100.0);
+    if (this.deadFishToday > thresholdCount) {
+      alerts.push({
+        id: 'alt-high-mortality',
+        category: 'extreme_condition',
+        title: 'HIGH MORTALITY REPORTED TODAY',
+        message: `${PLACEHOLDER_LIMITS.mortality.alertMessage}. ${this.deadFishToday} fish (${this.deadFishKgToday.toFixed(2)} kg) exceeds the 0.5% threshold (${thresholdCount.toFixed(0)} fish).`,
+        actionRequired: 'Check water and fish health immediately',
+        severity: 'medium', // Never red! Amber caution per rules
+        timestampText: 'Today Check-in',
+      });
+    }
+
     this.activeAlerts = alerts;
   }
 
@@ -453,17 +499,87 @@ class AquacultureService {
     this.completeSetup(data);
   }
 
+  public getDeadFishKgToday(): number {
+    return this.deadFishKgToday;
+  }
+
+  public getDeadFishCountToday(): number {
+    return this.deadFishCountToday;
+  }
+
+  public getMortalityInputUnit(): 'count' | 'kg' {
+    return this.mortalityInputUnit;
+  }
+
+  public getLastMortalityConfirmation(): string | null {
+    return this.lastMortalityConfirmation;
+  }
+
+  public getMortalityHistory() {
+    return [...this.mortalityHistory];
+  }
+
   public setDeadFishToday(count: number) {
     this.deadFishToday = Math.max(0, count);
+    this.deadFishCountToday = count;
+    this.deadFishKgToday = Number(((count * this.farmSetup.currentWeightG) / 1000.0).toFixed(2));
     this.refreshCalculations();
     this.notify();
   }
 
-  public finishCheckin(deadFishCount: number) {
-    this.deadFishToday = Math.max(0, deadFishCount);
+  public finishCheckin(params: { count: number; kg?: number; unit?: 'count' | 'kg' } | number) {
+    let count: number;
+    let kg: number;
+    let unit: 'count' | 'kg';
+
+    if (typeof params === 'number') {
+      count = Math.max(0, params);
+      kg = Number(((count * this.farmSetup.currentWeightG) / 1000.0).toFixed(2));
+      unit = 'count';
+    } else {
+      unit = params.unit || 'count';
+      if (unit === 'kg') {
+        kg = Math.max(0, params.kg ?? 0);
+        count = Math.round(kg / (this.farmSetup.currentWeightG / 1000.0));
+      } else {
+        count = Math.max(0, params.count);
+        kg = params.kg !== undefined ? params.kg : Number(((count * this.farmSetup.currentWeightG) / 1000.0).toFixed(2));
+      }
+    }
+
+    this.deadFishToday = count;
+    this.deadFishCountToday = count;
+    this.deadFishKgToday = kg;
+    this.mortalityInputUnit = unit;
     this.isCheckedInToday = true;
+
+    const remainingCount = Math.max(0, this.farmSetup.stockCount - count);
+
+    if (unit === 'kg') {
+      this.lastMortalityConfirmation = `Recorded ${kg.toFixed(2)} kg (approx. ${count} fish). Population now ${remainingCount.toLocaleString()}.`;
+    } else {
+      this.lastMortalityConfirmation = `Recorded ${count} fish (approx. ${kg.toFixed(2)} kg). Population now ${remainingCount.toLocaleString()}.`;
+    }
+
+    // Add to history
+    this.mortalityHistory = [
+      {
+        date: 'Today',
+        count,
+        kg,
+        unit,
+        approxOtherText: unit === 'kg'
+          ? `approx. ${count} fish at ${this.farmSetup.currentWeightG} g average`
+          : `approx. ${kg.toFixed(2)} kg at ${this.farmSetup.currentWeightG} g average`,
+        remainingCount,
+        remainingBiomassKg: Number(((remainingCount * this.farmSetup.currentWeightG) / 1000.0).toFixed(1)),
+      },
+      ...this.mortalityHistory.filter((h) => h.date !== 'Today'),
+    ];
+
     this.refreshCalculations();
     this.notify();
+    return this.lastMortalityConfirmation;
   }
 
   public logMealFed(mealId: string, actualKg: number, status: 'Given' | 'Reduced' = 'Given') {

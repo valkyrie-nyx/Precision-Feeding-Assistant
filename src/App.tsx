@@ -13,6 +13,8 @@ import { WaterQualityView } from './views/WaterQualityView';
 import { FeedInventoryView } from './views/FeedInventoryView';
 import { AnalyticsView } from './views/AnalyticsView';
 import { AlertsView } from './views/AlertsView';
+import { WaveBackground } from './components/waves/WaveBackground';
+import { WaveFooter } from './components/waves/WaveFooter';
 
 export function App() {
   const [isOnboarded, setIsOnboarded] = useState<boolean>(aquacultureService.getIsOnboarded());
@@ -46,7 +48,10 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fbfe] text-[#12365F] flex flex-col lg:flex-row font-sans selection:bg-[#0789F9] selection:text-white">
+    <div className="relative min-h-screen bg-[#f8fbfe] text-[#12365F] flex flex-col lg:flex-row font-sans selection:bg-[#0789F9] selection:text-white overflow-x-hidden">
+      {/* SUBTLE DRIFTING BACKGROUND WAVE LINES */}
+      <WaveBackground />
+
       {/* POND INITIALIZATION / CONFIGURATION MODAL */}
       {(!isOnboarded || isSetupOpen) && (
         <SetupModal
@@ -110,6 +115,9 @@ export function App() {
           {activeTab === 'alerts' && (
             <AlertsView onNavigateToTab={(t) => setActiveTab(t as MainTabType)} />
           )}
+
+          {/* LAYERED WAVE FOOTER WITH BOTTOM-LEFT FISH SILHOUETTES */}
+          <WaveFooter />
         </main>
 
         {/* MOBILE BOTTOM NAVIGATION BAR (< lg viewports only) */}

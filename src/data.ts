@@ -60,6 +60,12 @@ export const PLACEHOLDER_LIMITS = {
     status: 'placeholder',
     badgeText: 'Placeholder, expert review needed',
   },
+  mortality: {
+    dailyHighLossThresholdPct: 0.5,
+    status: 'placeholder',
+    badgeText: 'Example threshold, expert review needed.',
+    alertMessage: 'High mortality today, check water and fish health',
+  },
 };
 
 // Placeholder sample stages for species without an imported reference table

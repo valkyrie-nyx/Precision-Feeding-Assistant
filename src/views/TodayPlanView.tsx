@@ -72,6 +72,22 @@ export const TodayPlanView: React.FC<TodayPlanViewProps> = ({
         </div>
       )}
 
+      {/* LAST MORTALITY CONFIRMATION BANNER */}
+      {aquacultureService.getLastMortalityConfirmation() && (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-emerald-950 flex items-center justify-between gap-3 text-xs shadow-2xs">
+          <div className="flex items-center gap-2.5 font-semibold">
+            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>{aquacultureService.getLastMortalityConfirmation()}</span>
+          </div>
+          <button
+            onClick={() => setShowCheckin(true)}
+            className="text-[11px] font-bold uppercase tracking-wider text-emerald-800 bg-white hover:bg-emerald-100/60 px-3 py-1 rounded-xl border border-emerald-300 transition-colors shrink-0 cursor-pointer"
+          >
+            Update Check-in
+          </button>
+        </div>
+      )}
+
       {/* ============================================================== */}
       {/* 1. TOP SECTION: POND OVERVIEW & BIOLOGICAL CONTEXT (NOW AT TOP)*/}
       {/* ============================================================== */}
@@ -98,20 +114,24 @@ export const TodayPlanView: React.FC<TodayPlanViewProps> = ({
                 {farmSetup.pondName} · {farmSetup.farmName}
               </div>
               <div className="text-[11px] text-[#547392] truncate mt-0.5">
-                Nile Tilapia · {biomassKg} kg Live Biomass
+                Nile Tilapia (12g) · {biomassKg} kg Live Biomass
               </div>
               <div className="font-handwriting text-sm text-[#087A91] font-bold mt-0.5">
-                "Better Feeds, Healthier Farms"
+                Better Feeds · Healthier Farms
               </div>
             </div>
 
-            <div className="w-12 h-12 blob-mask-fish border-2 border-white shadow-xs shrink-0 overflow-hidden bg-sky-100">
+            <button
+              onClick={() => setShowCheckin(true)}
+              className="w-12 h-12 blob-mask-fish border-2 border-white shadow-xs shrink-0 overflow-hidden bg-sky-100 cursor-pointer"
+              title="Open morning check-in"
+            >
               <img
                 src="/images/swimming_fish.jpg"
                 alt="Fish thumbnail"
                 className="w-full h-full object-cover"
               />
-            </div>
+            </button>
           </div>
         </div>
       </section>

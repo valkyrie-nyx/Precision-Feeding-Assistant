@@ -96,22 +96,39 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   return (
-    <aside className="relative w-64 bg-gradient-to-b from-[#0789F9] via-[#067ee3] to-[#056ec9] text-white flex flex-col justify-between shrink-0 min-h-screen select-none shadow-xl z-20">
-      {/* ORGANIC WAVE RIGHT EDGE DECORATION (Desktop only) */}
-      <div className="absolute top-0 right-0 bottom-0 w-4 pointer-events-none overflow-hidden translate-x-full hidden lg:block">
+    <aside className="relative w-64 bg-gradient-to-b from-[#054b94] via-[#0789F9] to-[#08B9E8] text-white flex flex-col justify-between shrink-0 min-h-screen select-none shadow-xl z-20">
+      {/* ============================================================== */}
+      {/* FLOWING WAVY RIGHT EDGE + SECOND SEMI-TRANSPARENT WAVE BEHIND */}
+      {/* ============================================================== */}
+      <div
+        aria-hidden="true"
+        className="absolute top-0 right-0 bottom-0 w-6 pointer-events-none overflow-hidden translate-x-full hidden lg:block z-10"
+      >
+        {/* SECOND SEMI-TRANSPARENT WAVE CURVE (BEHIND) */}
         <svg
-          viewBox="0 0 16 1000"
+          viewBox="0 0 24 1000"
           preserveAspectRatio="none"
-          className="h-full w-4 text-[#0789F9]"
+          className="absolute inset-0 h-full w-full text-[#08B9E8]/40"
           fill="currentColor"
         >
-          <path d="M0,0 C8,150 16,300 6,500 C-2,700 12,850 0,1000 L0,1000 L0,0 Z" />
+          <path d="M0,0 C16,120 24,260 10,440 C-4,620 20,780 4,1000 L0,1000 Z" />
+        </svg>
+
+        {/* PRIMARY FLOWING WAVY RIGHT EDGE */}
+        <svg
+          viewBox="0 0 24 1000"
+          preserveAspectRatio="none"
+          className="absolute inset-0 h-full w-4 text-[#0789F9]"
+          fill="currentColor"
+        >
+          <path d="M0,0 C12,140 18,300 8,480 C-2,660 14,820 0,1000 L0,1000 Z" />
         </svg>
       </div>
 
+      {/* TOP BRAND & NAV CONTENT */}
       <div className="p-5 relative z-10">
         {/* BRAND LOGO WITH WHITE WATER WAVE */}
-        <div className="pb-6 border-b border-white/15">
+        <div className="pb-5 border-b border-white/20">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-xs border border-white/30 flex items-center justify-center shadow-inner">
               <svg
@@ -121,6 +138,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 stroke="currentColor"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                aria-hidden="true"
               >
                 <path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
                 <path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
@@ -136,7 +154,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   v2.4
                 </span>
               </div>
-              <p className="text-[11px] text-white/80 font-medium tracking-wide">
+              <p className="text-[11px] text-white/85 font-medium tracking-wide">
                 Precision Feeding Assistant
               </p>
             </div>
@@ -144,9 +162,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* ACTIVE POND CHIP */}
-        <div className="mt-4 mb-4 bg-white/10 hover:bg-white/15 transition-colors border border-white/20 rounded-xl p-3 backdrop-blur-2xs">
+        <div className="mt-4 mb-4 bg-white/10 hover:bg-white/15 transition-colors border border-white/20 rounded-2xl p-3 backdrop-blur-2xs">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-white/70 text-[10px] font-semibold uppercase tracking-wider">
+            <span className="text-white/75 text-[10px] font-semibold uppercase tracking-wider">
               Active Pond Unit
             </span>
             <span className="flex items-center gap-1.5 text-[11px] text-white font-semibold">
@@ -157,8 +175,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="font-bold text-sm text-white mt-0.5 truncate">
             {farmSetup.pondName} · {farmSetup.farmName}
           </div>
-          <div className="text-[11px] text-white/75 mt-0.5">
-            Species: Nile Tilapia (Fingerling)
+          <div className="text-[11px] text-white/80 mt-0.5">
+            Species: Nile Tilapia (12g Fingerling)
           </div>
         </div>
 
@@ -172,10 +190,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 key={item.id}
                 onClick={() => onTabChange(item.id)}
-                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-sm font-medium transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-white text-[#0789F9] font-bold shadow-md shadow-black/10'
-                    : 'text-white/85 hover:text-white hover:bg-white/15'
+                    ? 'bg-white text-[#054b94] font-bold shadow-md shadow-black/10'
+                    : 'text-white/90 hover:text-white hover:bg-white/15'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -202,24 +220,65 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </nav>
       </div>
 
-      {/* LOWER SECTION: DECORATIVE FISH & ESP32 STATUS */}
-      <div className="p-5 relative z-10 space-y-4">
-        {/* SUBTLE DECORATIVE FISH SILHOUETTES */}
-        <div className="opacity-35 pointer-events-none flex justify-around px-2">
-          <svg className="w-7 h-5 text-white transform -scale-x-100" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c1.85 0 3.58-.5 5.08-1.38L21 22l-1.62-3.92C20.5 16.58 21 14.85 21 13c0-6.08-4.92-11-9-11zm-1 5a1 1 0 110 2 1 1 0 010-2zm-4 7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z" opacity="0.3" />
-            <path d="M22 12c-3-2-7-3-11-2-2.5.6-4.8 1.8-7 3.5 1.5 2 4 3.5 7 3.5 4.5 0 8.5-2.5 11-5z" />
+      {/* ============================================================== */}
+      {/* LOWER SECTION: LAYERED BOTTOM WAVES, FAINT FISH, ESP32 CARD    */}
+      {/* ============================================================== */}
+      <div className="relative pt-6 pb-5 px-5 z-10 space-y-3 overflow-hidden">
+        {/* LAYERED BOTTOM WAVES IN THE SIDEBAR */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-28 pointer-events-none opacity-25 overflow-hidden"
+        >
+          {/* Back wave */}
+          <svg
+            viewBox="0 0 300 80"
+            preserveAspectRatio="none"
+            className="absolute inset-x-0 bottom-0 h-20 w-full text-white"
+            fill="currentColor"
+          >
+            <path d="M0,30 C60,5 120,45 180,20 C240,5 270,35 300,20 L300,80 L0,80 Z" />
           </svg>
-          <svg className="w-5 h-4 text-white transform translate-y-1" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M22 12c-3-2-7-3-11-2-2.5.6-4.8 1.8-7 3.5 1.5 2 4 3.5 7 3.5 4.5 0 8.5-2.5 11-5z" />
-          </svg>
-          <svg className="w-8 h-5 text-white transform -scale-x-100 translate-y-2" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M22 12c-3-2-7-3-11-2-2.5.6-4.8 1.8-7 3.5 1.5 2 4 3.5 7 3.5 4.5 0 8.5-2.5 11-5z" />
+          {/* Front wave */}
+          <svg
+            viewBox="0 0 300 80"
+            preserveAspectRatio="none"
+            className="absolute inset-x-0 bottom-0 h-14 w-full text-white opacity-40"
+            fill="currentColor"
+          >
+            <path d="M0,40 C70,55 140,25 210,45 C260,35 285,45 300,35 L300,80 L0,80 Z" />
           </svg>
         </div>
 
-        {/* ESP32 HARDWARE CONNECTION PANEL */}
-        <div className="bg-black/15 border border-white/20 rounded-2xl p-3.5 backdrop-blur-xs space-y-2">
+        {/* FAINT FISH SILHOUETTES NEAR BOTTOM */}
+        <div
+          aria-hidden="true"
+          className="relative opacity-40 pointer-events-none flex justify-around px-2 z-10"
+        >
+          <svg
+            className="w-6 h-4 text-white transform -scale-x-100"
+            viewBox="0 0 36 20"
+            fill="currentColor"
+          >
+            <path d="M34,10 C28,5 18,3 9,7 C5,3 2,1 0,2 C1,5 2,8 1,11 C2,14 1,17 0,20 C2,21 5,19 9,15 C18,19 28,17 34,12 C36,11 36,9 34,10 Z M26,8 C27.1,8 28,7.1 28,6 C26.9,6 26,6.9 26,8 Z" />
+          </svg>
+          <svg
+            className="w-4 h-3 text-white transform -scale-x-100 translate-y-2 opacity-75"
+            viewBox="0 0 36 20"
+            fill="currentColor"
+          >
+            <path d="M34,10 C28,5 18,3 9,7 C5,3 2,1 0,2 C1,5 2,8 1,11 C2,14 1,17 0,20 C2,21 5,19 9,15 C18,19 28,17 34,12 C36,11 36,9 34,10 Z" />
+          </svg>
+          <svg
+            className="w-7 h-4.5 text-white transform -scale-x-100 -translate-y-1"
+            viewBox="0 0 36 20"
+            fill="currentColor"
+          >
+            <path d="M34,10 C28,5 18,3 9,7 C5,3 2,1 0,2 C1,5 2,8 1,11 C2,14 1,17 0,20 C2,21 5,19 9,15 C18,19 28,17 34,12 C36,11 36,9 34,10 Z M26,8 C27.1,8 28,7.1 28,6 C26.9,6 26,6.9 26,8 Z" />
+          </svg>
+        </div>
+
+        {/* ESP32 HARDWARE CONNECTION PANEL: DARK TRANSLUCENT ROUNDED CARD */}
+        <div className="relative z-20 bg-slate-950/30 border border-white/20 rounded-2xl p-3.5 backdrop-blur-md space-y-2 shadow-lg shadow-black/10">
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-1.5 font-bold text-white text-[11px]">
               <Cpu className="w-3.5 h-3.5 text-[#08B9E8]" />
@@ -231,7 +290,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </span>
           </div>
 
-          <div className="text-[10px] text-white/70 space-y-0.5">
+          <div className="text-[10px] text-white/75 space-y-0.5">
             <div className="flex justify-between">
               <span>Bus:</span>
               <span className="text-white font-mono">RS485 Modbus</span>
@@ -242,10 +301,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           </div>
 
-          <div className="pt-2 border-t border-white/10 flex items-center gap-1.5">
+          <div className="pt-2 border-t border-white/15 flex items-center gap-1.5">
             <button
               onClick={onOpenDemoPanel}
-              className="flex-1 py-1 px-2 rounded-lg bg-white/15 hover:bg-white/25 text-white text-[11px] font-medium flex items-center justify-center gap-1 transition-colors"
+              className="flex-1 py-1 px-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-[11px] font-medium flex items-center justify-center gap-1 transition-colors cursor-pointer"
               title="Open hardware simulator"
             >
               <Sliders className="w-3 h-3 text-[#08B9E8]" />
@@ -253,14 +312,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
             <button
               onClick={onOpenCheckin}
-              className="py-1 px-2 rounded-lg bg-white/15 hover:bg-white/25 text-white text-[11px] font-medium flex items-center justify-center gap-1 transition-colors"
+              className="py-1 px-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-[11px] font-medium flex items-center justify-center gap-1 transition-colors cursor-pointer"
               title="Morning mortality & tray check-in"
             >
               <CalendarCheck className="w-3 h-3 text-white" />
             </button>
             <button
               onClick={onResetSetup}
-              className="py-1 px-2 rounded-lg bg-white/15 hover:bg-white/25 text-white text-[11px] font-medium flex items-center justify-center transition-colors"
+              className="py-1 px-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-[11px] font-medium flex items-center justify-center transition-colors cursor-pointer"
               title="Reset pond setup wizard"
             >
               <RotateCcw className="w-3 h-3 text-white/70" />
