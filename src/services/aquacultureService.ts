@@ -74,7 +74,7 @@ export interface AppAlertItem {
 }
 
 class AquacultureService {
-  private isOnboarded: boolean = true;
+  private isOnboarded: boolean = false;
   private farmSetup: FarmSetupData = {
     farmName: 'Sangli Aqua Farm',
     pondName: 'Pond A1',
