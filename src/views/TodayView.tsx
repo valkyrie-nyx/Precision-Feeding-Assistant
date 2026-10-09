@@ -21,7 +21,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { aquacultureService } from '../services/aquacultureService';
-import { DISCLAIMER_NOTE, type WeatherType } from '../MockData';
+import { DISCLAIMER_NOTE } from '../MockData';
 
 interface TodayViewProps {
   onNavigateToMeals: () => void;
@@ -38,7 +38,7 @@ export const TodayView: React.FC<TodayViewProps> = ({ onNavigateToMeals }) => {
   const [showWhyModal, setShowWhyModal] = useState<boolean>(false);
 
   // Weather icons helper
-  const getWeatherIcon = (wt: WeatherType) => {
+  const getWeatherIcon = (wt: string) => {
     switch (wt) {
       case 'Sunny': return Sun;
       case 'Cloudy': return Cloud;

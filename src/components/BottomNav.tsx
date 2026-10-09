@@ -1,8 +1,14 @@
 // src/components/BottomNav.tsx
 import React from 'react';
-import { Calendar, Utensils, TrendingUp } from 'lucide-react';
+import {
+  Calendar,
+  Utensils,
+  Droplets,
+  Package,
+  TrendingUp,
+} from 'lucide-react';
 
-export type MainTabType = 'today' | 'meals' | 'progress';
+export type MainTabType = 'today' | 'meals' | 'water' | 'inventory' | 'analytics';
 
 interface BottomNavProps {
   activeTab: MainTabType;
@@ -15,15 +21,17 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   onTabChange,
   pendingMealsCount,
 }) => {
-  const tabs: { id: MainTabType; label: string; icon: React.FC<{ className?: string }> }[] = [
-    { id: 'today', label: 'Today', icon: Calendar },
-    { id: 'meals', label: 'Meals', icon: Utensils },
-    { id: 'progress', label: 'Progress', icon: TrendingUp },
+  const tabs = [
+    { id: 'today' as MainTabType, label: 'Today', icon: Calendar, milestone2: false },
+    { id: 'meals' as MainTabType, label: 'Feed Log', icon: Utensils, milestone2: false },
+    { id: 'water' as MainTabType, label: 'Water', icon: Droplets, milestone2: true },
+    { id: 'inventory' as MainTabType, label: 'Stock', icon: Package, milestone2: true },
+    { id: 'analytics' as MainTabType, label: 'Growth', icon: TrendingUp, milestone2: true },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t-2 border-slate-200 shadow-2xl max-w-md mx-auto">
-      <div className="grid grid-cols-3 h-16">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-t border-slate-200/90 shadow-2xl max-w-md mx-auto">
+      <div className="grid grid-cols-5 h-16">
         {tabs.map((t) => {
           const IconComp = t.icon;
           const isActive = activeTab === t.id;
@@ -33,21 +41,32 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             <button
               key={t.id}
               onClick={() => onTabChange(t.id)}
-              className={`relative flex flex-col items-center justify-center gap-1 transition-all ${
+              className={`relative flex flex-col items-center justify-center gap-0.5 transition-all touch-target ${
                 isActive
-                  ? 'text-sky-600 font-black border-t-4 border-sky-600 -mt-1 bg-sky-50/50'
-                  : 'text-slate-500 font-bold hover:text-slate-800'
+                  ? 'text-teal-700 font-black'
+                  : 'text-slate-500 font-semibold hover:text-slate-800'
               }`}
             >
               <div className="relative">
-                <IconComp className={`w-6 h-6 ${isActive ? 'stroke-[2.5]' : 'stroke-[2]'}`} />
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                    isActive ? 'bg-teal-50 text-teal-700' : 'text-slate-500'
+                  }`}
+                >
+                  <IconComp className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
+                </div>
                 {showBadge && (
-                  <span className="absolute -top-1 -right-2 bg-rose-600 text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white">
+                  <span className="absolute -top-1 -right-1 bg-rose-600 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white">
                     {pendingMealsCount}
                   </span>
                 )}
+                {t.milestone2 && (
+                  <span className="absolute -top-1 -right-2 bg-slate-200 text-slate-700 text-[7px] font-extrabold px-1 rounded-full uppercase">
+                    M2
+                  </span>
+                )}
               </div>
-              <span className="text-xs tracking-tight">{t.label}</span>
+              <span className="text-[10px] tracking-tight">{t.label}</span>
             </button>
           );
         })}

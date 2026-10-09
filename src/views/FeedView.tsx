@@ -11,7 +11,7 @@ export const FeedView: React.FC = () => {
   const checkinData = aquacultureService.getCheckinData();
   const pending = meals.filter((meal) => meal.status === 'Pending' || meal.status === 'Reduced');
   const [mealId, setMealId] = useState(pending[0]?.id ?? meals[0]?.id ?? '');
-  const meal = meals.find((item) => item.id === mealId);
+  const meal = meals.find((item) => item.id === mealId) as any;
   const [oxygenMeal, setOxygenMeal] = useState<MealItem | null>(null);
   const [oxygenPassed, setOxygenPassed] = useState<Record<string, number>>({});
   const [actualKg, setActualKg] = useState('');
@@ -22,10 +22,10 @@ export const FeedView: React.FC = () => {
   const [message, setMessage] = useState('');
 
   const selectedBatch = mockFeedBatches.find((batch) => batch.id === batchId);
-  const pond = mockPonds.find((item) => item.id === meal?.pondId) ?? mockPonds[0];
+  const pond = mockPonds.find((item) => item.id === (meal as any)?.pondId) ?? mockPonds[0];
 
   const startOxygenCheck = () => {
-    if (meal) setOxygenMeal(meal);
+    if (meal) setOxygenMeal(meal as any);
   };
   const onOxygenPass = (approvedKg: number) => {
     if (!oxygenMeal) return;
