@@ -73,7 +73,51 @@ export const TodayPlanView: React.FC<TodayPlanViewProps> = ({
       )}
 
       {/* ============================================================== */}
-      {/* 1. PRIMARY SECTION: FEEDING SCHEDULE & PRESCRIPTION BOX        */}
+      {/* 1. TOP SECTION: POND OVERVIEW & BIOLOGICAL CONTEXT (NOW AT TOP)*/}
+      {/* ============================================================== */}
+      <section className="space-y-3">
+        {/* DESKTOP FULL HERO SECTION WITH POND & SWIMMING FISH */}
+        <div className="hidden lg:block">
+          <HeroSection
+            onViewPondDetails={() => onNavigateToTab?.('water')}
+            onOpenTimetable={() => setShowTimetable(true)}
+          />
+        </div>
+
+        {/* MOBILE COMPACT POND OVERVIEW CARD */}
+        <div className="lg:hidden ocean-card p-4 bg-gradient-to-r from-white via-[#f0f7fe] to-white border border-[#dcebfa]">
+          <div className="flex items-center gap-3">
+            <img
+              src="/images/pond_overview.jpg"
+              alt="Pond thumbnail"
+              className="w-16 h-16 rounded-xl object-cover border border-[#d6e8f7] shrink-0 shadow-xs"
+            />
+
+            <div className="flex-1 min-w-0">
+              <div className="font-bold text-xs text-[#12365F] truncate">
+                {farmSetup.pondName} · {farmSetup.farmName}
+              </div>
+              <div className="text-[11px] text-[#547392] truncate mt-0.5">
+                Nile Tilapia · {biomassKg} kg Live Biomass
+              </div>
+              <div className="font-handwriting text-sm text-[#087A91] font-bold mt-0.5">
+                "Better Feeds, Healthier Farms"
+              </div>
+            </div>
+
+            <div className="w-12 h-12 blob-mask-fish border-2 border-white shadow-xs shrink-0 overflow-hidden bg-sky-100">
+              <img
+                src="/images/swimming_fish.jpg"
+                alt="Fish thumbnail"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================== */}
+      {/* 2. SECOND SECTION: FEEDING SCHEDULE & PRESCRIPTION BOX         */}
       {/* ============================================================== */}
       <section className="space-y-4">
         {/* DESKTOP 2-COLUMN VIEW (>= lg) */}
@@ -415,65 +459,6 @@ export const TodayPlanView: React.FC<TodayPlanViewProps> = ({
                   </div>
                 );
               })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================== */}
-      {/* 2. SECONDARY SECTION: POND OVERVIEW & BIOLOGICAL CONTEXT       */}
-      {/* ============================================================== */}
-      <section className="space-y-3 pt-2">
-        <div className="flex items-center justify-between">
-          <div>
-            <span className="text-[10px] uppercase font-bold tracking-widest text-[#0789F9] block">
-              Facility & Biological Baseline
-            </span>
-            <h2 className="text-lg font-bold text-[#12365F]">
-              Pond Overview & Ecosystem
-            </h2>
-          </div>
-
-          <span className="text-xs text-[#547392]">
-            Detailed metrics inside <strong className="text-[#0789F9]">Water Quality</strong> & <strong className="text-[#0789F9]">Feed Inventory</strong> tabs
-          </span>
-        </div>
-
-        {/* DESKTOP FULL HERO SECTION WITH POND & SWIMMING FISH */}
-        <div className="hidden lg:block">
-          <HeroSection
-            onViewPondDetails={() => onNavigateToTab?.('water')}
-            onOpenTimetable={() => setShowTimetable(true)}
-          />
-        </div>
-
-        {/* MOBILE COMPACT POND OVERVIEW CARD */}
-        <div className="lg:hidden ocean-card p-4 bg-gradient-to-r from-white via-[#f0f7fe] to-white border border-[#dcebfa]">
-          <div className="flex items-center gap-3">
-            <img
-              src="/images/pond_overview.jpg"
-              alt="Pond thumbnail"
-              className="w-16 h-16 rounded-xl object-cover border border-[#d6e8f7] shrink-0 shadow-xs"
-            />
-
-            <div className="flex-1 min-w-0">
-              <div className="font-bold text-xs text-[#12365F] truncate">
-                {farmSetup.pondName} · {farmSetup.farmName}
-              </div>
-              <div className="text-[11px] text-[#547392] truncate mt-0.5">
-                Nile Tilapia · {biomassKg} kg Live Biomass
-              </div>
-              <div className="font-handwriting text-sm text-[#087A91] font-bold mt-0.5">
-                "Better Feeds, Healthier Farms"
-              </div>
-            </div>
-
-            <div className="w-12 h-12 blob-mask-fish border-2 border-white shadow-xs shrink-0 overflow-hidden bg-sky-100">
-              <img
-                src="/images/swimming_fish.jpg"
-                alt="Fish thumbnail"
-                className="w-full h-full object-cover"
-              />
             </div>
           </div>
         </div>
