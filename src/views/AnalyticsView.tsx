@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import {
   AlertTriangle,
   CheckCircle2,
+  Fish,
+  Scale,
 } from 'lucide-react';
 import { aquacultureService } from '../services/aquacultureService';
 import { DISCLAIMER_NOTE, PLACEHOLDER_LIMITS } from '../data';
@@ -41,6 +43,14 @@ export const AnalyticsView: React.FC = () => {
     setTimeout(() => setSuccessNote(null), 4000);
   };
 
+  const deadFishCount = aquacultureService.getDeadFishToday();
+  const deadFishKg = aquacultureService.getDeadFishKgToday();
+  const mortalityHistory = aquacultureService.getMortalityHistory();
+  const [mortalityUnit, setMortalityUnit] = useState<'count' | 'kg'>('count');
+
+  const highLossThresholdCount = farmSetup.stockCount * (PLACEHOLDER_LIMITS.mortality.dailyHighLossThresholdPct / 100.0);
+  const isHighMortalityToday = deadFishCount > highLossThresholdCount;
+
   return (
     <div className="space-y-6">
       {/* HEADER */}
@@ -50,10 +60,10 @@ export const AnalyticsView: React.FC = () => {
             Biological Modeling
           </span>
           <h2 className="text-xl font-bold text-slate-900 mt-1">
-            Thermal Growth Coefficient (TGC) & FCR Analytics
+            Thermal Growth Coefficient (TGC) & Mortality Analytics
           </h2>
           <p className="text-xs text-slate-500 font-mono mt-0.5">
-            Pond: {farmSetup.pondName} · Weight-driven Stage Modeling
+            Pond: {farmSetup.pondName} · Weight-driven Stage Modeling & Population Audit
           </p>
         </div>
 
@@ -62,6 +72,154 @@ export const AnalyticsView: React.FC = () => {
           <span>TGC Model Status: {PLACEHOLDER_LIMITS.tgc.badgeText}</span>
         </div>
       </div>
+
+      {/* DAILY MORTALITY & POPULATION AUDIT CARD */}
+      <section className="surface-panel p-5 border border-slate-200 rounded-xl space-y-4 shadow-2xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center border border-teal-200">
+              <Fish className="w-4 h-4 stroke-[2.2]" />
+            </div>
+            <div>
+              <h3 className="font-bold text-slate-900 text-sm">
+                Daily Mortality & Population Audit
+              </h3>
+              <p className="text-[11px] text-slate-500 font-mono">
+                Audit daily loss deductions in count or biomass
+              </p>
+            </div>
+          </div>
+
+          {/* SEGMENTED TOGGLE: Fish count | Weight (kg) */}
+          <div className="inline-flex p-1 rounded-lg bg-slate-100 border border-slate-300 shadow-2xs self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={() => setMortalityUnit('count')}
+              className={`px-3 py-1 rounded text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                mortalityUnit === 'count'
+                  ? 'bg-teal-700 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Fish className="w-3.5 h-3.5" />
+              <span>Fish count</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setMortalityUnit('kg')}
+              className={`px-3 py-1 rounded text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                mortalityUnit === 'kg'
+                  ? 'bg-teal-700 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Scale className="w-3.5 h-3.5" />
+              <span>Weight (kg)</span>
+            </button>
+          </div>
+        </div>
+
+        {/* HIGH LOSS WARNING BANNER (AMBER ONLY, NEVER RED!) */}
+        {isHighMortalityToday && (
+          <div className="p-3 bg-amber-50 border border-amber-300 rounded-lg text-amber-950 space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold flex items-center gap-1.5 text-amber-900">
+                <AlertTriangle className="w-4 h-4 text-amber-600" />
+                {PLACEHOLDER_LIMITS.mortality.alertMessage}
+              </span>
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-200/80 text-amber-900 border border-amber-300">
+                {PLACEHOLDER_LIMITS.mortality.badgeText}
+              </span>
+            </div>
+            <p className="text-xs text-amber-800">
+              Today's recorded loss is {deadFishCount} fish ({deadFishKg.toFixed(2)} kg), which exceeds the 0.5% threshold ({highLossThresholdCount.toFixed(0)} fish).
+            </p>
+          </div>
+        )}
+
+        {/* METRICS ROW: SHOWING BOTH COUNT AND KG */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="bg-[#f8faf9] p-3 rounded-lg border border-slate-200">
+            <span className="text-[10px] font-mono font-bold text-slate-500 uppercase block">
+              Today's Mortality
+            </span>
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-2xl font-extrabold text-slate-900 font-mono">
+                {mortalityUnit === 'count' ? deadFishCount : deadFishKg.toFixed(2)}
+              </span>
+              <span className="text-xs font-bold text-slate-600">
+                {mortalityUnit === 'count' ? 'fish' : 'kg'}
+              </span>
+            </div>
+            <span className="text-[11px] text-teal-800 font-mono block mt-0.5">
+              {mortalityUnit === 'count'
+                ? `approx. ${deadFishKg.toFixed(2)} kg at ${farmSetup.currentWeightG} g average`
+                : `approx. ${deadFishCount} fish at ${farmSetup.currentWeightG} g average`}
+            </span>
+          </div>
+
+          <div className="bg-[#f8faf9] p-3 rounded-lg border border-slate-200">
+            <span className="text-[10px] font-mono font-bold text-slate-500 uppercase block">
+              Active Population
+            </span>
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-2xl font-extrabold text-teal-800 font-mono">
+                {Math.max(0, farmSetup.stockCount - deadFishCount).toLocaleString()}
+              </span>
+              <span className="text-xs font-bold text-slate-600">fish</span>
+            </div>
+            <span className="text-[11px] text-slate-500 font-mono block mt-0.5">
+              Stocked: {farmSetup.stockCount.toLocaleString()} fish
+            </span>
+          </div>
+
+          <div className="bg-[#f8faf9] p-3 rounded-lg border border-slate-200">
+            <span className="text-[10px] font-mono font-bold text-slate-500 uppercase block">
+              Remaining Biomass
+            </span>
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-2xl font-extrabold text-emerald-700 font-mono">
+                {aquacultureService.getBiomassKg()}
+              </span>
+              <span className="text-xs font-bold text-slate-600">kg</span>
+            </div>
+            <span className="text-[11px] text-slate-500 font-mono block mt-0.5">
+              Deduction: {deadFishKg.toFixed(2)} kg today
+            </span>
+          </div>
+        </div>
+
+        {/* MORTALITY LOG TABLE */}
+        <div className="overflow-x-auto rounded border border-slate-200">
+          <table className="w-full text-left text-xs font-mono">
+            <thead className="bg-[#f8faf9] text-slate-500 text-[10px] uppercase border-b border-slate-200">
+              <tr>
+                <th className="py-2 px-3">Date</th>
+                <th className="py-2 px-3">
+                  {mortalityUnit === 'count' ? 'Count (Entered)' : 'Count (Estimated)'}
+                </th>
+                <th className="py-2 px-3">
+                  {mortalityUnit === 'kg' ? 'Weight (Entered)' : 'Weight (Estimated)'}
+                </th>
+                <th className="py-2 px-3">Remaining Pop</th>
+                <th className="py-2 px-3 text-right">Remaining Biomass</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 bg-white">
+              {mortalityHistory.map((item, idx) => (
+                <tr key={idx} className="hover:bg-slate-50 transition-colors">
+                  <td className="py-2 px-3 font-sans font-bold text-slate-900">{item.date}</td>
+                  <td className="py-2 px-3 text-slate-800">{item.count} fish</td>
+                  <td className="py-2 px-3 text-teal-800 font-semibold">{item.kg.toFixed(2)} kg</td>
+                  <td className="py-2 px-3 text-slate-600">{item.remainingCount.toLocaleString()}</td>
+                  <td className="py-2 px-3 text-right font-bold text-emerald-700">{item.remainingBiomassKg} kg</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
       {/* METRIC CARDS GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
