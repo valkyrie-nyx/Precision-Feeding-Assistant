@@ -335,16 +335,12 @@ export const TodayPlanView: React.FC<TodayPlanViewProps> = ({
 
       {/* ============================================================== */}
       {/* DESKTOP WEBSITE LAYOUT (>= lg viewports)                       */}
-      {/* Retains full spacious Hero, 12-col grid, trend chart & panels  */}
+      {/* 1. TOP PRIORITY: NEXT FEEDING SCHEDULE, WATER QUALITY, TIMELINE */}
+      {/* 2. OPERATIONAL GRID: TREND CHART, SENSORS, LOG & STOCK         */}
+      {/* 3. AT THE END: SLID DOWN POND OVERVIEW & HERO SECTION          */}
       {/* ============================================================== */}
       <div className="hidden lg:block space-y-6">
-        {/* 1. HERO SECTION (AIRY WHITE, WAVE BLOBS, SWIMMING FISH, POND OVERVIEW) */}
-        <HeroSection
-          onViewPondDetails={() => onNavigateToTab?.('water')}
-          onOpenTimetable={() => setShowTimetable(true)}
-        />
-
-        {/* 2. SAFETY ALERT (HORIZONTAL PALE-AMBER BANNER WITH ORANGE WARNING ICON) */}
+        {/* SAFETY ALERT (HORIZONTAL PALE-AMBER BANNER WITH ORANGE WARNING ICON) */}
         {shortBatch && !dismissedAlerts.includes('stock-banner') && (
           <div className="relative bg-[#FFFBEB] border border-[#FDE68A] rounded-2xl p-4 sm:p-5 text-[#92400E] shadow-xs flex items-center justify-between gap-4">
             <div className="flex items-center gap-3.5">
@@ -413,14 +409,14 @@ export const TodayPlanView: React.FC<TodayPlanViewProps> = ({
           </div>
         )}
 
-        {/* 3. MAIN WORKSPACE GRID: FEEDING & WATER QUALITY (LEFT) + OPERATIONAL PANELS (RIGHT) */}
+        {/* TOP PRIORITY: MAIN FEEDING OPERATIONS & WATER QUALITY GRID (12 COLS) */}
         <div className="grid grid-cols-12 gap-6">
           {/* LEFT COLUMN: FEEDING RECOMMENDATION + WATER QUALITY + TREND CHART (8 cols) */}
           <div className="col-span-8 space-y-6">
             {/* TOP ROW: FEEDING RECOMMENDATION PANEL & WATER QUALITY SECTION */}
             <div className="grid grid-cols-12 gap-5">
               {/* E. FEEDING RECOMMENDATION PANEL (6 cols) */}
-              <div className="col-span-6 ocean-card p-5 space-y-4 flex flex-col justify-between">
+              <div className="col-span-6 ocean-card p-5 space-y-4 flex flex-col justify-between border-2 border-[#0789F9]/20 shadow-md shadow-[#0789F9]/5">
                 <div>
                   {/* HEADER */}
                   <div className="flex items-center justify-between pb-3 border-b border-[#e2eef9]">
@@ -508,15 +504,15 @@ export const TodayPlanView: React.FC<TodayPlanViewProps> = ({
                 <div className="mt-4 pt-3 border-t border-[#e2eef9] flex items-center gap-2">
                   <button
                     onClick={() => onStartFeeding(nextMeal)}
-                    className="flex-1 py-2.5 px-4 rounded-xl bg-[#0789F9] hover:bg-[#0574d6] text-white text-xs font-bold shadow-md shadow-[#0789F9]/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    className="flex-1 py-3 px-4 rounded-xl bg-[#0789F9] hover:bg-[#0574d6] text-white text-xs font-bold shadow-md shadow-[#0789F9]/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <ShieldCheck className="w-4 h-4 stroke-[2.5]" />
-                    <span>Start Feeding Session</span>
+                    <span>Start Feeding & Log Session</span>
                   </button>
 
                   <button
                     onClick={() => setShowWhyAmount(true)}
-                    className="py-2.5 px-3 rounded-xl bg-[#f0f7fe] hover:bg-[#e4f1fc] text-[#0789F9] text-xs font-semibold border border-[#d6e8f7] transition-colors"
+                    className="py-3 px-3 rounded-xl bg-[#f0f7fe] hover:bg-[#e4f1fc] text-[#0789F9] text-xs font-semibold border border-[#d6e8f7] transition-colors"
                     title="Mathematical explanation of feed quantity"
                   >
                     <HelpCircle className="w-4 h-4" />
@@ -610,7 +606,7 @@ export const TodayPlanView: React.FC<TodayPlanViewProps> = ({
                       <span className="status-pip status-pip-safe" />
                     </div>
                     <div className="text-xl font-bold font-mono text-[#12365F]">
-                      1.2 <span className="text-xs font-sans font-normal text-slate-500">ppt</span>
+                      1.2 <span className="text-xs font-normal">ppt</span>
                     </div>
                     <div className="text-[10px] font-medium text-emerald-700">
                       Safe: 0.5 – 3.0 ppt
@@ -635,6 +631,94 @@ export const TodayPlanView: React.FC<TodayPlanViewProps> = ({
 
           {/* RIGHT COLUMN: OPERATIONAL & HARDWARE PANELS (4 cols) */}
           <div className="col-span-4 space-y-6">
+            {/* TODAY'S FEEDING SESSIONS SCHEDULE & LOG CARD (DESKTOP) */}
+            <div className="ocean-card p-5 space-y-3.5 border-2 border-[#0789F9]/20">
+              <div className="flex items-center justify-between pb-2 border-b border-[#e2eef9]">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-[#0789F9]/10 text-[#0789F9] flex items-center justify-center">
+                    <Utensils className="w-4 h-4 stroke-[2.5]" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-[#12365F] text-sm">
+                      Today's Feeding Schedule
+                    </h3>
+                    <span className="text-[10px] text-[#547392]">
+                      {meals.length} Scheduled Daily Sessions
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setShowTimetable(true)}
+                  className="text-xs font-semibold text-[#0789F9] hover:underline"
+                >
+                  Full Timetable
+                </button>
+              </div>
+
+              {/* SESSIONS LIST */}
+              <div className="space-y-2">
+                {meals.map((meal) => {
+                  const isGiven = meal.status === 'Given';
+                  const isSkipped = meal.status === 'Skipped';
+                  const isReduced = meal.status === 'Reduced';
+                  const isPending = meal.status === 'Pending';
+
+                  return (
+                    <div
+                      key={meal.id}
+                      onClick={() => isPending && onStartFeeding(meal)}
+                      className={`p-3 rounded-xl border flex items-center justify-between text-xs transition-all ${
+                        isPending
+                          ? 'border-[#0789F9]/40 bg-[#f8fbfe] hover:bg-[#f0f7fe] cursor-pointer shadow-2xs'
+                          : 'border-slate-200 bg-white'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <span className="font-mono font-bold text-xs text-[#0789F9]">
+                          {meal.time}
+                        </span>
+                        <div>
+                          <div className="font-bold text-[#12365F]">
+                            Meal {meal.sessionIndex} · <strong>{meal.plannedKg} kg</strong>
+                          </div>
+                          <div className="text-[10px] text-slate-400">
+                            {meal.feedCode} ({meal.pelletSizeMm}mm)
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                            isGiven
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : isSkipped
+                              ? 'bg-rose-100 text-rose-800'
+                              : isReduced
+                              ? 'bg-amber-100 text-amber-800'
+                              : 'bg-sky-100 text-[#0789F9]'
+                          }`}
+                        >
+                          {meal.status}
+                        </span>
+                        {isPending && (
+                          <ChevronRight className="w-3.5 h-3.5 text-[#0789F9]" />
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="pt-2 border-t border-[#e2eef9] flex items-center justify-between text-xs text-[#547392]">
+                <span>Total Planned Today:</span>
+                <span className="font-mono font-bold text-[#12365F]">
+                  {meals.reduce((acc, m) => acc + m.plannedKg, 0).toFixed(1)} kg
+                </span>
+              </div>
+            </div>
+
             {/* H1. DEVICE STATUS PANEL */}
             <div className="ocean-card p-5 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-[#e2eef9]">
@@ -755,28 +839,25 @@ export const TodayPlanView: React.FC<TodayPlanViewProps> = ({
                   </div>
                 ))}
               </div>
-
-              {/* NEXT SCHEDULED FEEDING SUMMARY */}
-              <div className="pt-3 border-t border-[#e2eef9] flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-[#0789F9]" />
-                  <div>
-                    <span className="text-[10px] text-slate-400 uppercase block">Next Session</span>
-                    <span className="font-bold text-[#12365F]">
-                      {nextMeal ? nextMeal.time : '08:30 AM'} · {totalPlannedKg} kg
-                    </span>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => setShowTimetable(true)}
-                  className="px-3 py-1.5 rounded-lg bg-[#f0f7fe] hover:bg-[#e4f1fc] text-[#0789F9] font-bold text-xs transition-colors"
-                >
-                  Schedule
-                </button>
-              </div>
             </div>
           </div>
+        </div>
+
+        {/* AT THE END: SLID DOWN POND OVERVIEW & HERO SECTION */}
+        <div className="pt-4 border-t border-[#e2eef9]">
+          <div className="mb-3 flex items-center justify-between">
+            <span className="text-xs uppercase font-bold tracking-wider text-[#0789F9]">
+              Pond Ecosystem & Biological Growth Baseline
+            </span>
+            <span className="text-xs text-[#547392]">
+              Overview & Environmental Parameters
+            </span>
+          </div>
+
+          <HeroSection
+            onViewPondDetails={() => onNavigateToTab?.('water')}
+            onOpenTimetable={() => setShowTimetable(true)}
+          />
         </div>
       </div>
 
