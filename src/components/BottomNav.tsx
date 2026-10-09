@@ -22,11 +22,11 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   pendingMealsCount,
 }) => {
   const tabs = [
-    { id: 'today' as MainTabType, label: 'Today', icon: Calendar, milestone2: false },
-    { id: 'meals' as MainTabType, label: 'Feed Log', icon: Utensils, milestone2: false },
-    { id: 'water' as MainTabType, label: 'Water', icon: Droplets, milestone2: true },
-    { id: 'inventory' as MainTabType, label: 'Stock', icon: Package, milestone2: true },
-    { id: 'analytics' as MainTabType, label: 'Growth', icon: TrendingUp, milestone2: true },
+    { id: 'today' as MainTabType, label: 'Today', icon: Calendar },
+    { id: 'meals' as MainTabType, label: 'Feed Log', icon: Utensils },
+    { id: 'water' as MainTabType, label: 'Water', icon: Droplets },
+    { id: 'inventory' as MainTabType, label: 'Stock', icon: Package },
+    { id: 'analytics' as MainTabType, label: 'Growth', icon: TrendingUp },
   ];
 
   return (
@@ -58,11 +58,6 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                 {showBadge && (
                   <span className="absolute -top-1 -right-1 bg-rose-600 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white">
                     {pendingMealsCount}
-                  </span>
-                )}
-                {t.milestone2 && (
-                  <span className="absolute -top-1 -right-2 bg-slate-100 text-slate-500 text-[7px] font-black px-1 rounded-full uppercase border border-slate-200">
-                    M2
                   </span>
                 )}
               </div>
