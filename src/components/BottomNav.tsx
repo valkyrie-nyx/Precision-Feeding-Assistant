@@ -30,7 +30,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-t border-slate-200/90 shadow-2xl max-w-md mx-auto">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-sky-100 shadow-2xl max-w-md mx-auto">
       <div className="grid grid-cols-5 h-16">
         {tabs.map((t) => {
           const IconComp = t.icon;
@@ -43,14 +43,14 @@ export const BottomNav: React.FC<BottomNavProps> = ({
               onClick={() => onTabChange(t.id)}
               className={`relative flex flex-col items-center justify-center gap-0.5 transition-all touch-target ${
                 isActive
-                  ? 'text-teal-700 font-black'
-                  : 'text-slate-500 font-semibold hover:text-slate-800'
+                  ? 'text-[#007cf0] font-black'
+                  : 'text-slate-400 font-semibold hover:text-slate-700'
               }`}
             >
               <div className="relative">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                    isActive ? 'bg-teal-50 text-teal-700' : 'text-slate-500'
+                  className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+                    isActive ? 'bg-sky-50 text-[#007cf0] shadow-sm' : 'text-slate-400'
                   }`}
                 >
                   <IconComp className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
@@ -61,7 +61,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                   </span>
                 )}
                 {t.milestone2 && (
-                  <span className="absolute -top-1 -right-2 bg-slate-200 text-slate-700 text-[7px] font-extrabold px-1 rounded-full uppercase">
+                  <span className="absolute -top-1 -right-2 bg-slate-100 text-slate-500 text-[7px] font-black px-1 rounded-full uppercase border border-slate-200">
                     M2
                   </span>
                 )}

@@ -1,6 +1,6 @@
 // src/components/AppHeader.tsx
 import React, { useRef, useState } from 'react';
-import { Waves, Sliders, CalendarCheck } from 'lucide-react';
+import { Sliders, CalendarCheck, Droplets } from 'lucide-react';
 import { aquacultureService } from '../services/aquacultureService';
 
 interface AppHeaderProps {
@@ -17,7 +17,6 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ onOpenDemoPanel, onOpenChe
 
   const handleTitleClick = () => {
     const now = Date.now();
-    // Keep taps from the last 800ms
     tapTimesRef.current = [...tapTimesRef.current.filter((t) => now - t < 800), now];
 
     if (tapTimesRef.current.length >= 3) {
@@ -32,38 +31,38 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ onOpenDemoPanel, onOpenChe
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-slate-200/90 shadow-sm px-4 py-3">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-sky-100 shadow-sm px-4 py-3.5">
       <div className="flex items-center justify-between">
-        {/* APP TITLE & TRIPLE-TAP TRIGGER */}
+        {/* LOGO & TITLE (YOGAZ STYLE WITH FLUID LOTUS / DROP ICON) */}
         <div
           onClick={handleTitleClick}
           className="flex items-center gap-3 cursor-pointer select-none group"
           title="Triple-tap title to open Demo Sandbox"
         >
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-teal-600 to-sky-600 text-white flex items-center justify-center shadow-md ring-offset-pill group-active:scale-95 transition-transform">
-            <Waves className="w-6 h-6 stroke-[2.5]" />
+          <div className="w-11 h-11 rounded-2xl bg-yogaz-primary text-white flex items-center justify-center shadow-yogaz-pill concentric-ring-blue group-active:scale-95 transition-transform">
+            <Droplets className="w-6 h-6 stroke-[2.5]" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <h1 className="text-base font-black text-slate-900 tracking-tight leading-none group-hover:text-teal-700 transition-colors">
-                Precision Feeding
+              <h1 className="text-lg font-black text-slate-900 tracking-tight leading-none group-hover:text-[#007cf0] transition-colors">
+                JalDrishti
               </h1>
-              <span className="text-[9px] font-extrabold text-teal-800 bg-teal-50 px-1.5 py-0.5 rounded-full border border-teal-200">
+              <span className="text-[9px] font-black text-[#007cf0] bg-sky-50 px-2 py-0.5 rounded-full border border-sky-200">
                 PRO
               </span>
             </div>
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-teal-700 block mt-0.5">
-              {farmSetup.pondName || 'Sangli Pilot'} · Live Telemetry
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#007cf0] block mt-1">
+              Precision Feeding · {farmSetup.pondName || 'Pond A1'}
             </span>
           </div>
         </div>
 
-        {/* QUICK ACTIONS: DEMO BUTTON & TELEMETRY INDICATOR */}
+        {/* QUICK BUTTONS */}
         <div className="flex items-center gap-2">
           {onOpenCheckin && (
             <button
               onClick={onOpenCheckin}
-              className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-all touch-target"
+              className="w-10 h-10 rounded-full bg-slate-50 hover:bg-sky-50 text-slate-700 hover:text-[#007cf0] border border-slate-200 flex items-center justify-center transition-smooth touch-target shadow-sm"
               title="Daily Check-in"
               aria-label="Daily Check-in"
             >
@@ -73,7 +72,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ onOpenDemoPanel, onOpenChe
 
           <button
             onClick={onOpenDemoPanel}
-            className="w-9 h-9 rounded-full bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200 flex items-center justify-center shadow-sm transition-all touch-target"
+            className="w-10 h-10 rounded-full bg-sky-50 hover:bg-sky-100 text-[#007cf0] border border-sky-200 flex items-center justify-center shadow-sm transition-smooth touch-target"
             title="Open Demo Panel"
             aria-label="Demo Panel"
           >
@@ -84,7 +83,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ onOpenDemoPanel, onOpenChe
 
       {/* TRIPLE-TAP HINT POPUP */}
       {hintText && (
-        <div className="mt-2 text-center text-[10px] font-black uppercase tracking-wider text-teal-700 bg-teal-50 border border-teal-200 rounded-full py-1 animate-in fade-in duration-150">
+        <div className="mt-2 text-center text-[10px] font-black uppercase tracking-wider text-[#007cf0] bg-sky-50 border border-sky-200 rounded-full py-1 animate-in fade-in duration-150">
           {hintText}
         </div>
       )}
