@@ -1,14 +1,10 @@
 // src/components/SetupModal.tsx
 import React, { useState } from 'react';
 import {
-  Fish,
-  Calendar,
-  Scale,
-  Building,
   Check,
   ChevronRight,
-  Sparkles,
   AlertTriangle,
+  Activity,
 } from 'lucide-react';
 import { SPECIES_LIST, DISCLAIMER_NOTE } from '../data';
 import { determineStage } from '../calcEngine';
@@ -35,7 +31,6 @@ export const SetupModal: React.FC<SetupModalProps> = ({ onComplete }) => {
   const [stockCount, setStockCount] = useState<number>(15000);
   const [startingWeightG, setStartingWeightG] = useState<number>(12.0);
 
-  const selectedSpecies = SPECIES_LIST.find((s) => s.id === selectedSpeciesId) || SPECIES_LIST[0];
   const calculatedStage = determineStage(selectedSpeciesId, startingWeightG);
 
   const handleFinish = () => {
@@ -51,136 +46,124 @@ export const SetupModal: React.FC<SetupModalProps> = ({ onComplete }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl border border-slate-100 flex flex-col min-h-[580px] justify-between p-6 relative overflow-hidden">
-        {/* Organic Yoga Aesthetic Decorative Blobs */}
-        <div className="absolute -top-16 -right-16 w-44 h-44 bg-teal-100/60 blob-shape-1 pointer-events-none" />
-        <div className="absolute -top-12 -right-12 w-44 h-44 border border-teal-300/40 blob-shape-1 pointer-events-none" />
-        <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-sky-100/60 blob-shape-2 pointer-events-none" />
-
+    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-2xs flex items-center justify-center p-4">
+      <div className="w-full max-w-lg bg-white rounded-lg shadow-xl border border-slate-300 flex flex-col justify-between max-h-[92vh]">
         {/* STEP HEADER */}
-        <div className="relative z-10 space-y-2">
-          <div className="flex items-center justify-between text-xs font-bold text-slate-400">
-            <span className="tracking-widest uppercase text-[10px] text-teal-700 font-extrabold">
-              Pond Setup Assistant
-            </span>
-            <span className="bg-teal-50 text-teal-800 px-3 py-1 rounded-full font-mono text-[11px] font-bold border border-teal-200">
-              Step {step} of 4
+        <div className="px-5 py-3.5 border-b border-slate-200 bg-[#f8faf9] flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Activity className="w-4 h-4 text-[#0f766e]" />
+            <span className="font-bold text-slate-900 text-sm">
+              Pond Initialization Wizard
             </span>
           </div>
-          <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-            <div
-              className="bg-gradient-to-r from-teal-500 to-sky-500 h-full transition-all duration-300 rounded-full"
-              style={{ width: `${(step / 4) * 100}%` }}
-            />
+
+          <div className="flex items-center gap-2 font-mono text-xs">
+            <span className="text-slate-500">Step {step} of 4</span>
+            <div className="w-16 bg-slate-200 h-1.5 rounded-full overflow-hidden">
+              <div
+                className="bg-[#0f766e] h-full transition-all"
+                style={{ width: `${(step / 4) * 100}%` }}
+              />
+            </div>
           </div>
         </div>
 
-        {/* SCREEN 1: FARM & POND NAME */}
+        {/* STEP 1: FARM & POND IDENTIFIER */}
         {step === 1 && (
-          <div className="relative z-10 my-auto space-y-6 animate-in fade-in duration-200">
-            <div className="space-y-2">
-              <div className="w-14 h-14 rounded-full bg-teal-500 text-white flex items-center justify-center shadow-md ring-offset-pill">
-                <Building className="w-7 h-7 stroke-[2.2]" />
-              </div>
-              <span className="text-[10px] tracking-widest uppercase font-extrabold text-teal-700 block">
-                Identification
+          <div className="p-6 space-y-4 overflow-y-auto">
+            <div className="space-y-1">
+              <span className="text-[10px] uppercase font-mono tracking-wider text-teal-800 font-bold block">
+                Step 1 · Identification
               </span>
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-snug">
-                Name your farm & pond
-              </h1>
-              <p className="text-xs text-slate-500 font-medium">
-                Personalizes all automated feeding recommendations to this specific pond water.
+              <h2 className="text-lg font-bold text-slate-900">
+                Register Farm & Pond Identifier
+              </h2>
+              <p className="text-xs text-slate-500">
+                Establishes the agricultural management unit and links to the ESP32 sensor stream.
               </p>
             </div>
 
-            <div className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
-                  Farm Name
+            <div className="space-y-3 pt-2">
+              <div className="space-y-1">
+                <label className="text-xs font-mono font-bold text-slate-700">
+                  Facility / Farm Name
                 </label>
                 <input
                   type="text"
                   value={farmName}
                   onChange={(e) => setFarmName(e.target.value)}
                   placeholder="e.g. Sangli Aqua Farm"
-                  className="w-full bg-slate-50 border-2 border-slate-200 focus:border-teal-500 focus:bg-white rounded-2xl px-4 py-3.5 text-base font-bold text-slate-900 focus:outline-none transition-all shadow-inner touch-target"
+                  className="w-full bg-slate-50 border border-slate-300 focus:border-[#0f766e] rounded px-3 py-2 text-sm font-semibold text-slate-900 focus:outline-none"
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
-                  Pond Identifier
+              <div className="space-y-1">
+                <label className="text-xs font-mono font-bold text-slate-700">
+                  Pond Unit Identifier
                 </label>
                 <input
                   type="text"
                   value={pondName}
                   onChange={(e) => setPondName(e.target.value)}
                   placeholder="e.g. Pond A1"
-                  className="w-full bg-slate-50 border-2 border-slate-200 focus:border-teal-500 focus:bg-white rounded-2xl px-4 py-3.5 text-base font-bold text-slate-900 focus:outline-none transition-all shadow-inner touch-target"
+                  className="w-full bg-slate-50 border border-slate-300 focus:border-[#0f766e] rounded px-3 py-2 text-sm font-semibold text-slate-900 focus:outline-none"
                 />
               </div>
             </div>
           </div>
         )}
 
-        {/* SCREEN 2: SPECIES CHECKLIST */}
+        {/* STEP 2: SPECIES SELECTION */}
         {step === 2 && (
-          <div className="relative z-10 my-auto space-y-4 animate-in fade-in duration-200">
+          <div className="p-6 space-y-4 overflow-y-auto">
             <div className="space-y-1">
-              <div className="w-12 h-12 rounded-full bg-teal-500 text-white flex items-center justify-center shadow-md ring-offset-pill">
-                <Fish className="w-6 h-6 stroke-[2.2]" />
-              </div>
-              <span className="text-[10px] tracking-widest uppercase font-extrabold text-teal-700 block">
-                Species Selection
+              <span className="text-[10px] uppercase font-mono tracking-wider text-teal-800 font-bold block">
+                Step 2 · Biology
               </span>
-              <h1 className="text-xl font-black text-slate-900 tracking-tight">
-                Which species are you farming?
-              </h1>
-              <p className="text-xs text-slate-500 font-medium">
-                Tap to pick your farmed fish or shrimp from the checklist.
+              <h2 className="text-lg font-bold text-slate-900">
+                Select Cultured Species
+              </h2>
+              <p className="text-xs text-slate-500">
+                Links biological growth dynamics and feeding tables from verified aquaculture sources.
               </p>
             </div>
 
-            {/* Checklist */}
-            <div className="max-h-[46vh] overflow-y-auto space-y-2 pr-1">
+            <div className="max-h-[46vh] overflow-y-auto space-y-1.5 pr-1">
               {SPECIES_LIST.map((sp) => {
                 const isSelected = selectedSpeciesId === sp.id;
                 return (
                   <button
                     key={sp.id}
                     onClick={() => setSelectedSpeciesId(sp.id)}
-                    className={`w-full text-left p-3.5 rounded-2xl border-2 font-bold text-sm flex items-center justify-between transition-all touch-target ${
+                    className={`w-full text-left p-3 rounded border text-xs flex items-center justify-between transition-colors ${
                       isSelected
-                        ? 'border-teal-600 bg-teal-50 text-teal-950 shadow-md ring-2 ring-teal-200'
+                        ? 'border-[#0f766e] bg-teal-50/50 text-slate-900'
                         : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
                     }`}
                   >
-                    <div className="space-y-0.5">
+                    <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
-                          {sp.category}
+                        <span className="font-bold text-slate-900">{sp.name}</span>
+                        <span className="text-[10px] font-mono text-slate-500">
+                          ({sp.category})
                         </span>
-                        <span className="text-sm font-black">{sp.name}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 pt-0.5">
+                      <div className="text-[10px] font-mono mt-0.5">
                         {sp.hasReferenceTable ? (
-                          <span className="text-[9px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                            Reference table loaded
+                          <span className="text-emerald-700 font-medium">
+                            Table: {sp.tableId} (Reference loaded)
                           </span>
                         ) : (
-                          <span className="text-[9px] font-extrabold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 flex items-center gap-1">
-                            <AlertTriangle className="w-2.5 h-2.5 text-amber-600" />
-                            No table loaded, placeholder values
+                          <span className="text-amber-700 font-medium flex items-center gap-1">
+                            <AlertTriangle className="w-3 h-3" />
+                            No table loaded, placeholder sample rates
                           </span>
                         )}
                       </div>
                     </div>
 
                     {isSelected && (
-                      <div className="w-6 h-6 rounded-full bg-teal-600 text-white flex items-center justify-center shrink-0 shadow">
-                        <Check className="w-3.5 h-3.5 stroke-[3]" />
-                      </div>
+                      <Check className="w-4 h-4 text-[#0f766e] shrink-0 font-bold" />
                     )}
                   </button>
                 );
@@ -189,7 +172,7 @@ export const SetupModal: React.FC<SetupModalProps> = ({ onComplete }) => {
 
             {selectedSpeciesId === 'other' && (
               <div className="space-y-1 pt-1">
-                <label className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+                <label className="text-xs font-mono font-bold text-slate-700">
                   Custom Species Name
                 </label>
                 <input
@@ -197,166 +180,143 @@ export const SetupModal: React.FC<SetupModalProps> = ({ onComplete }) => {
                   value={customSpeciesName}
                   onChange={(e) => setCustomSpeciesName(e.target.value)}
                   placeholder="e.g. Chanos chanos / Milkfish"
-                  className="w-full bg-slate-50 border-2 border-teal-500 rounded-2xl px-4 py-2.5 text-sm font-bold text-slate-900 focus:outline-none"
+                  className="w-full bg-slate-50 border border-slate-300 focus:border-[#0f766e] rounded px-3 py-2 text-xs font-semibold"
                 />
               </div>
             )}
           </div>
         )}
 
-        {/* SCREEN 3: STOCKING DATE, COUNT & WEIGHT */}
+        {/* STEP 3: STOCKING PARAMETERS */}
         {step === 3 && (
-          <div className="relative z-10 my-auto space-y-6 animate-in fade-in duration-200">
+          <div className="p-6 space-y-4 overflow-y-auto">
             <div className="space-y-1">
-              <div className="w-12 h-12 rounded-full bg-teal-500 text-white flex items-center justify-center shadow-md ring-offset-pill">
-                <Scale className="w-6 h-6 stroke-[2.2]" />
-              </div>
-              <span className="text-[10px] tracking-widest uppercase font-extrabold text-teal-700 block">
-                Stocking Parameters
+              <span className="text-[10px] uppercase font-mono tracking-wider text-teal-800 font-bold block">
+                Step 3 · Stocking
               </span>
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-                Pond Stocking Details
-              </h1>
-              <p className="text-xs text-slate-500 font-medium">
-                Growth stage is figured out automatically from date and initial weight.
+              <h2 className="text-lg font-bold text-slate-900">
+                Pond Stocking Parameters
+              </h2>
+              <p className="text-xs text-slate-500">
+                Stocking date, fish count, and starting weight determine baseline biomass automatically.
               </p>
             </div>
 
-            <div className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-teal-600" />
+            <div className="space-y-3 font-mono text-xs">
+              <div className="space-y-1">
+                <label className="text-slate-700 font-bold uppercase text-[11px] block">
                   Stocking Date
                 </label>
                 <input
                   type="date"
                   value={stockingDate}
                   onChange={(e) => setStockingDate(e.target.value)}
-                  className="w-full bg-slate-50 border-2 border-slate-200 focus:border-teal-500 rounded-2xl px-4 py-3 text-base font-bold text-slate-900 focus:outline-none shadow-inner touch-target"
+                  className="w-full bg-slate-50 border border-slate-300 rounded px-3 py-2 text-slate-900"
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
-                  Number Stocked
+              <div className="space-y-1">
+                <label className="text-slate-700 font-bold uppercase text-[11px] block">
+                  Stocked Quantity (Live Count)
                 </label>
                 <input
                   type="number"
                   value={stockCount}
                   onChange={(e) => setStockCount(parseInt(e.target.value) || 0)}
-                  className="w-full bg-slate-50 border-2 border-slate-200 focus:border-teal-500 rounded-2xl px-4 py-3 text-2xl font-black font-mono text-slate-900 focus:outline-none shadow-inner touch-target"
+                  className="w-full bg-slate-50 border border-slate-300 rounded px-3 py-2 text-base font-bold text-slate-900"
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                  <Scale className="w-3.5 h-3.5 text-teal-600" />
-                  Starting Mean Weight (grams)
+              <div className="space-y-1">
+                <label className="text-slate-700 font-bold uppercase text-[11px] block">
+                  Starting Mean Weight (grams per fish)
                 </label>
                 <input
                   type="number"
                   step="0.5"
                   value={startingWeightG}
                   onChange={(e) => setStartingWeightG(parseFloat(e.target.value) || 0)}
-                  className="w-full bg-slate-50 border-2 border-slate-200 focus:border-teal-500 rounded-2xl px-4 py-3 text-3xl font-black font-mono text-slate-900 focus:outline-none shadow-inner touch-target"
+                  className="w-full bg-slate-50 border border-slate-300 rounded px-3 py-2 text-base font-bold text-slate-900"
                 />
+                <p className="text-[10px] text-slate-500 font-sans mt-0.5">
+                  *The platform classifies growth stage automatically based on weight range.
+                </p>
               </div>
             </div>
           </div>
         )}
 
-        {/* SCREEN 4: FRIENDLY SUMMARY (Auto-computed stage) */}
+        {/* STEP 4: SUMMARY & CONFIRMATION */}
         {step === 4 && (
-          <div className="relative z-10 my-auto space-y-6 animate-in zoom-in-95 duration-200">
-            <div className="text-center space-y-2">
-              <div className="w-16 h-16 rounded-full bg-teal-500 text-white flex items-center justify-center mx-auto shadow-lg ring-offset-pill">
-                <Sparkles className="w-8 h-8 stroke-[2.2]" />
-              </div>
-              <span className="text-[10px] tracking-widest uppercase font-extrabold text-teal-700 block">
-                Calculated Baseline
+          <div className="p-6 space-y-4 overflow-y-auto">
+            <div className="space-y-1">
+              <span className="text-[10px] uppercase font-mono tracking-wider text-teal-800 font-bold block">
+                Step 4 · Verification
               </span>
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-                Setup Complete!
-              </h1>
+              <h2 className="text-lg font-bold text-slate-900">
+                Pond Baseline Configured
+              </h2>
+              <p className="text-xs text-slate-500">
+                Calculated operational parameters ready for precision feeding.
+              </p>
             </div>
 
-            <div className="bg-slate-50 border-2 border-teal-200/80 p-5 rounded-3xl space-y-4 shadow-sm">
-              <div className="text-center space-y-1">
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                  Automated Stage Assessment
-                </p>
-                <p className="text-lg font-black text-slate-900 leading-snug">
-                  Your fish are about{' '}
-                  <span className="text-teal-700 font-black underline decoration-teal-400">
-                    {startingWeightG} g
-                  </span>{' '}
-                  and in the{' '}
-                  <span className="bg-teal-100 text-teal-900 px-3 py-1 rounded-full font-black border border-teal-300 inline-block">
-                    {calculatedStage.name}
-                  </span>{' '}
-                  stage.
-                </p>
+            <div className="bg-[#f8faf9] border border-slate-200 rounded p-4 space-y-3 font-mono text-xs">
+              <div className="pb-2 border-b border-slate-200 flex justify-between">
+                <span className="text-slate-500">Automated Stage:</span>
+                <span className="font-bold text-slate-900 font-sans">{calculatedStage.name}</span>
               </div>
-
-              <div className="border-t border-slate-200/80 pt-3 space-y-2 text-xs font-semibold text-slate-600">
-                <div className="flex justify-between">
-                  <span>Assigned Feed:</span>
-                  <span className="font-extrabold text-slate-900">
-                    {calculatedStage.feedCode} ({calculatedStage.pelletSizeMm} mm pellet)
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Daily Meal Frequency:</span>
-                  <span className="font-extrabold text-slate-900">{calculatedStage.mealsPerDay} meals / day</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Estimated Biomass:</span>
-                  <span className="font-extrabold text-slate-900">
-                    {((stockCount * startingWeightG) / 1000).toFixed(1)} kg
-                  </span>
-                </div>
+              <div className="pb-2 border-b border-slate-200 flex justify-between">
+                <span className="text-slate-500">Assigned Feed:</span>
+                <span className="font-bold text-slate-900 font-sans">{calculatedStage.feedCode} ({calculatedStage.pelletSizeMm}mm)</span>
               </div>
-
-              {/* Status Badge */}
-              <div className="p-3 bg-amber-50 border border-amber-300 rounded-2xl text-amber-950 text-xs font-bold flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
-                <span>
-                  {selectedSpecies.hasReferenceTable
-                    ? 'Published reference, unreviewed: Table loaded from FAO AFFRIS.'
-                    : 'Placeholder, expert review needed: No reference table loaded.'}
+              <div className="pb-2 border-b border-slate-200 flex justify-between">
+                <span className="text-slate-500">Session Frequency:</span>
+                <span className="font-bold text-slate-900">{calculatedStage.mealsPerDay} meals / day</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Initial Live Biomass:</span>
+                <span className="font-bold text-teal-800 font-bold">
+                  {((stockCount * startingWeightG) / 1000).toFixed(1)} kg
                 </span>
               </div>
             </div>
           </div>
         )}
 
-        {/* BOTTOM PILL BUTTON (One main button per screen) */}
-        <div className="relative z-10 pt-4 space-y-2">
-          {step < 4 ? (
-            <button
-              onClick={() => setStep((prev) => prev + 1)}
-              className="w-full bg-gradient-to-r from-teal-600 to-sky-600 hover:from-teal-500 hover:to-sky-500 text-white font-black text-lg rounded-full py-4 px-6 flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-all touch-target"
-            >
-              <span>
-                {step === 1 && 'Next: Choose Species'}
-                {step === 2 && 'Next: Stock Details'}
-                {step === 3 && 'Calculate Growth Stage'}
-              </span>
-              <ChevronRight className="w-5 h-5 stroke-[2.5]" />
-            </button>
-          ) : (
-            <button
-              onClick={handleFinish}
-              className="w-full bg-teal-700 hover:bg-teal-600 text-white font-black text-xl rounded-full py-4 px-6 flex items-center justify-center gap-2 shadow-xl active:scale-98 transition-all touch-target"
-            >
-              <span>Start feeding {pondName || 'Pond A1'}</span>
-              <Sparkles className="w-5 h-5 fill-white/20" />
-            </button>
-          )}
-
-          <p className="text-[10px] text-center text-slate-400 font-medium">
+        {/* FOOTER & NAVIGATION BUTTONS */}
+        <div className="px-5 py-3.5 border-t border-slate-200 bg-[#f8faf9] flex items-center justify-between">
+          <span className="text-[10px] font-mono text-slate-400">
             {DISCLAIMER_NOTE}
-          </p>
+          </span>
+
+          <div className="flex gap-2 font-mono text-xs">
+            {step > 1 && (
+              <button
+                onClick={() => setStep((prev) => prev - 1)}
+                className="px-3 py-1.5 rounded border border-slate-300 text-slate-700 hover:bg-slate-100"
+              >
+                Back
+              </button>
+            )}
+
+            {step < 4 ? (
+              <button
+                onClick={() => setStep((prev) => prev + 1)}
+                className="px-4 py-1.5 rounded bg-[#0f766e] hover:bg-[#115e59] text-white font-semibold flex items-center gap-1.5"
+              >
+                <span>Continue</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            ) : (
+              <button
+                onClick={handleFinish}
+                className="px-4 py-1.5 rounded bg-[#0f766e] hover:bg-[#115e59] text-white font-semibold flex items-center gap-1.5"
+              >
+                <span>Initialize {pondName || 'Pond A1'}</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

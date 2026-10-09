@@ -1,7 +1,8 @@
+// src/views/WaterQualityView.tsx
 import React, { useState } from 'react';
 import {
-  Droplets,
   Wind,
+  Radio,
 } from 'lucide-react';
 import { aquacultureService } from '../services/aquacultureService';
 import { HOURLY_OXYGEN_OUTLOOK, DISCLAIMER_NOTE, PLACEHOLDER_LIMITS } from '../data';
@@ -19,134 +20,179 @@ export const WaterQualityView: React.FC = () => {
     telemetry.liveDO >= PLACEHOLDER_LIMITS.oxygen.stopLevelMgL &&
     telemetry.liveDO < PLACEHOLDER_LIMITS.oxygen.fullFeedingLevelMgL;
 
-  // Aerator timeline
   const aeratorSchedule = [
-    { time: '10:00 PM – 06:00 AM', status: 'Active', reason: 'Pre-dawn respiration prevention' },
-    { time: '12:00 PM – 02:00 PM', status: 'Standby', reason: 'Destratification & surface mix' },
-    { time: '02:00 PM – 06:00 PM', status: 'Off', reason: 'Natural photosynthetic saturation' },
+    { time: '22:00 – 06:00', relay: 'Relay 1 + 2', status: 'ACTIVE (Forced)', reason: 'Pre-dawn algal respiration trough protection' },
+    { time: '12:00 – 14:00', relay: 'Relay 1', status: 'STANDBY (Thermal Mix)', reason: 'Water column destratification & heat mixing' },
+    { time: '14:00 – 18:00', relay: 'Relay 1', status: 'OFF (Standby)', reason: 'Natural photosynthetic super-saturation' },
+    { time: '18:00 – 22:00', relay: 'Relay 1', status: 'ACTIVE', reason: 'Post-dusk oxygen depletion mitigation' },
   ];
 
   return (
-    <div className="space-y-6 pb-28 max-w-md mx-auto relative">
-      {/* FLUID ORGANIC BACKGROUND WAVES */}
-      <div className="absolute -top-12 -right-20 w-64 h-64 bg-gradient-to-bl from-sky-400/20 via-cyan-300/10 to-transparent blob-yogaz-hero pointer-events-none -z-10" />
-      <div className="absolute top-80 -left-20 w-56 h-56 bg-gradient-to-tr from-sky-300/15 via-teal-200/10 to-transparent blob-yogaz-wave-2 pointer-events-none -z-10" />
-
+    <div className="space-y-6">
       {/* HEADER */}
-      <div className="pt-1">
-        <span className="text-[10px] font-black uppercase tracking-[0.22em] text-[#007cf0] block">
-          POND TELEMETRY · SENSOR SUITE
-        </span>
-        <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">
-          Water Quality & Aeration
-        </h2>
-        <p className="text-xs font-semibold text-slate-500 mt-0.5">
-          {farmSetup.pondName} · Continuous Multi-Probe Analysis
-        </p>
-      </div>
-
-      {/* LIVE PROBE READOUT CARD (HERO CARD WITH HUGE NUMBER) */}
-      <div className="bg-white rounded-[2.5rem] p-6 shadow-yogaz-card border border-sky-100 space-y-5 relative overflow-hidden">
-        <div className="flex items-center justify-between border-b border-sky-100 pb-3">
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-full bg-sky-50 text-[#007cf0] flex items-center justify-center">
-              <Droplets className="w-5 h-5 stroke-[2.2]" />
-            </div>
-            <div>
-              <span className="text-xs font-black uppercase text-slate-800 block">
-                Optical Probe DO
-              </span>
-              <span className="text-[10px] text-slate-500 font-semibold">
-                {telemetry.lastSyncText}
-              </span>
-            </div>
-          </div>
-
-          <span
-            className={`text-xs font-black px-3 py-1 rounded-full border ${
-              isLowDO
-                ? 'bg-rose-50 text-rose-700 border-rose-300'
-                : isCautionDO
-                ? 'bg-amber-50 text-amber-700 border-amber-300'
-                : 'bg-emerald-50 text-emerald-700 border-emerald-300'
-            }`}
-          >
-            {isLowDO ? 'Stop Alert' : isCautionDO ? 'Caution Range' : 'Oxygen Safe'}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
+        <div>
+          <span className="text-[10px] font-mono uppercase tracking-wider text-teal-800 bg-teal-50 px-2 py-0.5 rounded border border-teal-200 font-semibold">
+            Environmental Telemetry
           </span>
+          <h2 className="text-xl font-bold text-slate-900 mt-1">
+            Water Quality Monitoring & Aerator Controls
+          </h2>
+          <p className="text-xs text-slate-500 font-mono mt-0.5">
+            Pond: {farmSetup.pondName} · ESP32 Sensor Hub Stream
+          </p>
         </div>
 
-        {/* HUGE NUMBER >= 48px */}
-        <div className="text-center py-2">
-          <span className="text-[11px] font-black uppercase tracking-[0.2em] text-[#007cf0] block">
-            Current Dissolved Oxygen
-          </span>
-          <div className="flex items-baseline justify-center gap-2 my-1">
-            <span className="text-6xl font-black text-slate-900 font-mono tracking-tight">
+        <div className="flex items-center gap-2 text-xs font-mono text-slate-600 bg-white px-3 py-1.5 rounded border border-slate-200">
+          <Radio className="w-3.5 h-3.5 text-[#0f766e] animate-pulse" />
+          <span>Probe Stream: OK · {telemetry.lastSyncText}</span>
+        </div>
+      </div>
+
+      {/* 4 PRIMARY SENSOR CHANNELS MATRIX */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* DO Channel */}
+        <div className="surface-panel p-4 space-y-2 border border-slate-200 shadow-2xs">
+          <div className="flex items-center justify-between text-[10px] font-mono uppercase text-slate-500">
+            <span>Dissolved Oxygen</span>
+            <span
+              className={`font-bold ${
+                isLowDO ? 'text-rose-600' : isCautionDO ? 'text-amber-600' : 'text-emerald-600'
+              }`}
+            >
+              {isLowDO ? 'STOP' : isCautionDO ? 'CAUTION' : 'NORMAL'}
+            </span>
+          </div>
+
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-3xl font-bold font-mono text-slate-900">
               {telemetry.liveDO.toFixed(1)}
             </span>
-            <span className="text-2xl font-black text-[#007cf0] font-mono">
-              mg/L
-            </span>
+            <span className="text-xs font-mono text-slate-500">mg/L</span>
           </div>
-          <div className="text-xs font-semibold text-slate-500">
-            Target feeding threshold: ≥ 5.0 mg/L · Emergency stop: &lt; 3.0 mg/L
+
+          <div className="space-y-1">
+            <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden flex">
+              <div className="w-[30%] bg-rose-400" />
+              <div className="w-[20%] bg-amber-400" />
+              <div className="w-[50%] bg-emerald-400" />
+            </div>
+            <div className="flex justify-between text-[9px] font-mono text-slate-400">
+              <span>0</span>
+              <span>Stop &lt; 3.0</span>
+              <span>Target ≥ 5.0</span>
+              <span>10</span>
+            </div>
           </div>
         </div>
 
-        {/* 3 PARAMETER METRIC CHIPS */}
-        <div className="grid grid-cols-3 gap-2.5 pt-1">
-          <div className="bg-sky-50/70 border border-sky-100 rounded-2xl p-3 text-center">
-            <span className="text-[10px] font-bold text-slate-500 uppercase block">Temp</span>
-            <span className="text-sm font-black text-slate-900 font-mono block">
-              {telemetry.liveTemp.toFixed(1)}°C
-            </span>
-            <span className="text-[9px] font-bold text-[#007cf0]">Optimum</span>
+        {/* Water Temp Channel */}
+        <div className="surface-panel p-4 space-y-2 border border-slate-200 shadow-2xs">
+          <div className="flex items-center justify-between text-[10px] font-mono uppercase text-slate-500">
+            <span>Temperature</span>
+            <span className="text-teal-700 font-bold">OPTIMUM</span>
           </div>
 
-          <div className="bg-sky-50/70 border border-sky-100 rounded-2xl p-3 text-center">
-            <span className="text-[10px] font-bold text-slate-500 uppercase block">pH Probe</span>
-            <span className="text-sm font-black text-slate-900 font-mono block">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-3xl font-bold font-mono text-slate-900">
+              {telemetry.liveTemp.toFixed(1)}
+            </span>
+            <span className="text-xs font-mono text-slate-500">°C</span>
+          </div>
+
+          <div className="space-y-1">
+            <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden flex">
+              <div className="w-[25%] bg-sky-300" />
+              <div className="w-[50%] bg-emerald-400" />
+              <div className="w-[25%] bg-rose-400" />
+            </div>
+            <div className="flex justify-between text-[9px] font-mono text-slate-400">
+              <span>15°C</span>
+              <span>Opt: 27–32°C</span>
+              <span>38°C</span>
+            </div>
+          </div>
+        </div>
+
+        {/* pH Channel */}
+        <div className="surface-panel p-4 space-y-2 border border-slate-200 shadow-2xs">
+          <div className="flex items-center justify-between text-[10px] font-mono uppercase text-slate-500">
+            <span>Acidity (pH)</span>
+            <span className="text-emerald-700 font-bold">STABLE</span>
+          </div>
+
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-3xl font-bold font-mono text-slate-900">
               7.6
             </span>
-            <span className="text-[9px] font-bold text-emerald-600">Stable</span>
+            <span className="text-xs font-mono text-slate-500">pH</span>
           </div>
 
-          <div className="bg-sky-50/70 border border-sky-100 rounded-2xl p-3 text-center">
-            <span className="text-[10px] font-bold text-slate-500 uppercase block">Turbidity</span>
-            <span className="text-sm font-black text-slate-900 font-mono block">
-              {telemetry.turbidityNtu} NTU
+          <div className="space-y-1">
+            <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden flex">
+              <div className="w-[25%] bg-amber-300" />
+              <div className="w-[50%] bg-emerald-400" />
+              <div className="w-[25%] bg-amber-300" />
+            </div>
+            <div className="flex justify-between text-[9px] font-mono text-slate-400">
+              <span>6.0</span>
+              <span>Safe: 6.5–8.5</span>
+              <span>9.0</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Turbidity Channel */}
+        <div className="surface-panel p-4 space-y-2 border border-slate-200 shadow-2xs">
+          <div className="flex items-center justify-between text-[10px] font-mono uppercase text-slate-500">
+            <span>Turbidity</span>
+            <span className="text-slate-600 font-bold">NORMAL</span>
+          </div>
+
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-3xl font-bold font-mono text-slate-900">
+              {telemetry.turbidityNtu}
             </span>
-            <span className="text-[9px] font-bold text-slate-600">Normal</span>
+            <span className="text-xs font-mono text-slate-500">NTU</span>
+          </div>
+
+          <div className="space-y-1">
+            <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden flex">
+              <div className="w-[60%] bg-emerald-400" />
+              <div className="w-[40%] bg-rose-400" />
+            </div>
+            <div className="flex justify-between text-[9px] font-mono text-slate-400">
+              <span>0 NTU</span>
+              <span>Safe &lt; 50</span>
+              <span>100 NTU</span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* 24-HOUR DIURNAL OXYGEN CURVE */}
-      <div className="bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-200/90 space-y-4">
-        <div className="flex items-center justify-between">
+      {/* 24-HOUR DIURNAL OXYGEN FORECASTING GRAPH */}
+      <div className="surface-panel p-5 space-y-4 shadow-2xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
           <div>
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#007cf0] block">
-              DIURNAL CYCLE
-            </span>
-            <h3 className="text-base font-black text-slate-900">
-              24-Hour Oxygen Forecasting Curve
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+              24-Hour Diurnal Dissolved Oxygen Model
             </h3>
+            <p className="text-[11px] text-slate-500 font-mono mt-0.5">
+              Hourly photosynthesis & algal respiration cycle predictions
+            </p>
           </div>
-          <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
-            Photosynthesis Model
+
+          <span className="text-[10px] font-mono px-2 py-0.5 bg-slate-100 rounded text-slate-600 border border-slate-200">
+            Model: Diurnal Sine Curve + Sunlight Irradiance
           </span>
         </div>
 
-        <p className="text-xs text-slate-600 leading-relaxed">
-          Oxygen peaks in mid-afternoon from algae photosynthesis and drops to its lowest trough right before dawn due to night respiration.
-        </p>
-
-        {/* INTERACTIVE CHART BARS */}
-        <div className="bg-slate-50 border border-slate-200 rounded-3xl p-4 space-y-3">
-          <div className="flex items-end justify-between gap-1.5 h-36 pt-4 px-1">
+        {/* TECHNICAL STEP/BAR CHART */}
+        <div className="bg-[#f8faf9] border border-slate-200 rounded p-4 space-y-4">
+          <div className="flex items-end justify-between gap-2 h-44 pt-6 px-2">
             {HOURLY_OXYGEN_OUTLOOK.map((pt) => {
               const isSelected = selectedHour === pt.hour;
-              const heightPct = Math.min(100, Math.max(15, (pt.predictedDO / 8.5) * 100));
+              const heightPct = Math.min(100, Math.max(12, (pt.predictedDO / 8.0) * 100));
               const isSafe = pt.predictedDO >= 5.0;
               const isDanger = pt.predictedDO < 3.5;
 
@@ -156,110 +202,123 @@ export const WaterQualityView: React.FC = () => {
                   onClick={() => setSelectedHour(pt.hour)}
                   className="flex-1 flex flex-col items-center gap-1 cursor-pointer group"
                 >
-                  <span className={`text-[9px] font-bold font-mono transition-opacity ${
-                    isSelected ? 'opacity-100 text-[#007cf0]' : 'opacity-0 group-hover:opacity-100 text-slate-500'
-                  }`}>
+                  <span
+                    className={`text-[9px] font-mono font-bold transition-opacity ${
+                      isSelected
+                        ? 'opacity-100 text-[#0f766e]'
+                        : 'opacity-0 group-hover:opacity-100 text-slate-500'
+                    }`}
+                  >
                     {pt.predictedDO}
                   </span>
 
-                  <div className="w-full max-w-[28px] h-28 bg-slate-200 rounded-t-xl flex items-end overflow-hidden p-0.5">
+                  <div className="w-full max-w-[36px] h-32 bg-slate-200/80 rounded-t flex items-end p-0.5">
                     <div
                       style={{ height: `${heightPct}%` }}
-                      className={`w-full rounded-t-lg transition-all ${
+                      className={`w-full rounded-t transition-all ${
                         isSelected
-                          ? 'bg-[#007cf0] shadow-md'
+                          ? 'bg-[#0f766e] ring-2 ring-teal-300'
                           : isDanger
-                          ? 'bg-rose-400 group-hover:bg-rose-500'
+                          ? 'bg-rose-500 group-hover:bg-rose-600'
                           : isSafe
-                          ? 'bg-emerald-400 group-hover:bg-emerald-500'
-                          : 'bg-amber-400 group-hover:bg-amber-500'
+                          ? 'bg-emerald-600 group-hover:bg-emerald-700'
+                          : 'bg-amber-500 group-hover:bg-amber-600'
                       }`}
                     />
                   </div>
 
-                  <span className={`text-[10px] font-black transition-colors ${
-                    isSelected ? 'text-[#007cf0]' : 'text-slate-500'
-                  }`}>
-                    {pt.hour.split(':')[0]}h
+                  <span
+                    className={`text-[10px] font-mono transition-colors ${
+                      isSelected ? 'font-bold text-[#0f766e]' : 'text-slate-500'
+                    }`}
+                  >
+                    {pt.hour}
                   </span>
                 </div>
               );
             })}
           </div>
 
-          {/* DETAIL STRIP FOR SELECTED HOUR */}
-          <div className="bg-white rounded-2xl p-3 border border-slate-200 flex items-center justify-between text-xs">
+          {/* INSPECTED HOUR DETAIL STRIP */}
+          <div className="bg-white p-3 rounded border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
             <div>
-              <span className="font-extrabold text-slate-900 block font-mono">
-                {selectedPoint.hour} Window · {selectedPoint.predictedDO} mg/L
+              <span className="font-bold text-slate-900">
+                Window {selectedPoint.hour}: Predicted {selectedPoint.predictedDO} mg/L
               </span>
-              <span className="text-[11px] text-slate-500">{selectedPoint.reason}</span>
+              <span className="text-slate-500 block text-[11px] mt-0.5">
+                Biological rationale: {selectedPoint.reason}
+              </span>
             </div>
-            <span className={`px-2.5 py-1 rounded-full font-black text-[10px] uppercase ${
-              selectedPoint.safety === 'Safe'
-                ? 'bg-emerald-100 text-emerald-800'
-                : selectedPoint.safety === 'Caution'
-                ? 'bg-amber-100 text-amber-800'
-                : 'bg-rose-100 text-rose-800'
-            }`}>
-              {selectedPoint.safety}
+
+            <span
+              className={`px-2.5 py-1 rounded text-[10px] font-bold uppercase self-start sm:self-auto border ${
+                selectedPoint.safety === 'Safe'
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                  : selectedPoint.safety === 'Caution'
+                  ? 'bg-amber-50 text-amber-800 border-amber-200'
+                  : 'bg-rose-50 text-rose-800 border-rose-200'
+              }`}
+            >
+              {selectedPoint.safety} Feeding Window
             </span>
           </div>
         </div>
       </div>
 
-      {/* AERATOR AUTOMATION SCHEDULE */}
-      <div className="bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-200/90 space-y-4">
-        <div className="flex items-center justify-between">
+      {/* AERATOR AUTOMATION SCHEDULE & HARDWARE RELAY BOARD */}
+      <div className="surface-panel p-5 space-y-4 shadow-2xs">
+        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-full bg-teal-50 text-teal-700 flex items-center justify-center">
-              <Wind className="w-5 h-5 stroke-[2.2]" />
-            </div>
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#007cf0] block">
-                AERATION TIMELINE
-              </span>
-              <h3 className="text-base font-black text-slate-900">
-                Paddlewheel Aerator Plan
-              </h3>
-            </div>
+            <Wind className="w-4 h-4 text-teal-700" />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+              Paddlewheel Aerator Control Matrix (ESP32 Relay Board)
+            </h3>
           </div>
-          <span className="text-[10px] font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
-            2 Units Sync
+
+          <span className="text-[10px] font-mono text-teal-800 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
+            Automated Duty Cycle Active
           </span>
         </div>
 
-        <div className="space-y-2.5">
-          {aeratorSchedule.map((item, idx) => (
-            <div
-              key={idx}
-              className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between"
-            >
-              <div className="space-y-0.5">
-                <span className="text-xs font-black text-slate-900 font-mono block">
-                  {item.time}
-                </span>
-                <span className="text-[11px] text-slate-500 font-medium">
-                  {item.reason}
-                </span>
-              </div>
-              <span className={`text-[10px] font-black px-2.5 py-1 rounded-full ${
-                item.status === 'Active'
-                  ? 'bg-teal-100 text-teal-900 border border-teal-300'
-                  : item.status === 'Standby'
-                  ? 'bg-amber-100 text-amber-900'
-                  : 'bg-slate-200 text-slate-600'
-              }`}>
-                {item.status}
-              </span>
-            </div>
-          ))}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs font-mono">
+            <thead>
+              <tr className="border-b border-slate-200 text-[10px] uppercase text-slate-500">
+                <th className="pb-2">Time Window</th>
+                <th className="pb-2">Assigned Relays</th>
+                <th className="pb-2">Operational State</th>
+                <th className="pb-2">Biological Rationale</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {aeratorSchedule.map((row, idx) => (
+                <tr key={idx} className="hover:bg-slate-50 transition-colors">
+                  <td className="py-2.5 font-bold text-slate-900">{row.time}</td>
+                  <td className="py-2.5 text-slate-600">{row.relay}</td>
+                  <td className="py-2.5">
+                    <span
+                      className={`text-[10px] px-2 py-0.5 rounded font-semibold border ${
+                        row.status.includes('ACTIVE')
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                          : row.status.includes('STANDBY')
+                          ? 'bg-amber-50 text-amber-800 border-amber-200'
+                          : 'bg-slate-100 text-slate-700 border-slate-200'
+                      }`}
+                    >
+                      {row.status}
+                    </span>
+                  </td>
+                  <td className="py-2.5 text-slate-500 font-sans text-[11px]">{row.reason}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
-      {/* MANDATORY FOOTER */}
-      <footer className="pt-4 text-center">
-        <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+      {/* FOOTER */}
+      <footer className="pt-6 pb-2 text-center border-t border-slate-200/80">
+        <p className="text-[11px] font-mono uppercase tracking-wider text-slate-400">
           {DISCLAIMER_NOTE}
         </p>
       </footer>
