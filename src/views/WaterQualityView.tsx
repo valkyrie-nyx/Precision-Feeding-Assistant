@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { aquacultureService } from '../services/aquacultureService';
 import { HOURLY_OXYGEN_OUTLOOK, DISCLAIMER_NOTE, PLACEHOLDER_LIMITS } from '../data';
+import { WaterQualityTrendChart } from '../components/WaterQualityTrendChart';
 
 export const WaterQualityView: React.FC = () => {
   const telemetry = aquacultureService.getTelemetry();
@@ -315,6 +316,9 @@ export const WaterQualityView: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* MULTI-CHANNEL DIURNAL TREND CHART */}
+      <WaterQualityTrendChart />
 
       {/* FOOTER */}
       <footer className="pt-6 pb-2 text-center border-t border-slate-200/80">
